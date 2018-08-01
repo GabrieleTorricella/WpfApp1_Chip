@@ -1,0 +1,21 @@
+﻿<Window x:Class="WpfApp1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <local:WKChipsSelector x:Name="Chip">
+        </local:WKChipsSelector>
+        <!--<ListBox Name="lstItem" HorizontalAlignment="Left" Margin="39,51,0,0" VerticalAlignment="Top"
+                 Height="158" Width="379" >
+            <TextBox Name="a" Height="55" TextWrapping="Wrap" Text="" Width="195" GotFocus="a_GotFocus"/>
+            <ComboBox Name="b" Height="55" Width="232" Visibility="Hidden" SelectionChanged="ComboBox_SelectionChanged" 
+                      HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            
+        </ListBox>-->
+        <!--<Button Margin="423,0,0,248" Click="Button_Click"></Button>-->
+    </Grid>
+</Window>
