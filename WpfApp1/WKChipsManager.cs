@@ -10,8 +10,6 @@ using System.Windows.Data;
 
 namespace WpfApp1
 {
-
-
     /// <summary>
     /// Chip selector
     /// </summary>
@@ -215,7 +213,7 @@ namespace WpfApp1
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            _chipsItem = (ItemsControl)GetTemplateChild("ChipsItems");
+            //_chipsItem = (ItemsControl)GetTemplateChild("ChipsItems");
             listBox = (ListBox)GetTemplateChild("ListItems");
             _listTo = (ListBox)GetTemplateChild("ListTo");
             collectionView = CollectionViewSource.GetDefaultView(ItemsSource);
@@ -229,8 +227,8 @@ namespace WpfApp1
             listBox.SelectionChanged += ListBoxItems_SelectionChanged;
             _searchBox = (TextBox)GetTemplateChild("SearchBox");
             _searchBox.TextChanged += _searchBox_TextChanged;
+            _searchBox.Focus();
             lstChip = new List<WKChip>();
-
         }
 
         private void ListBoxItems_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -242,13 +240,13 @@ namespace WpfApp1
             {
                 chipItem.InfoUser = user.Name;
                 _listTo.Items.Add(chipItem);
-                lstChip.Add(chipItem);
-
                 chipItem.DeleteChip += ChipItem_DeleteChip;
                 //_listTo.Items.Add();
                 _searchBox.Text = default(string);
             }
-           
+            e.Handled = true;
+            //listBox.SelectedIndex = -1;
+            Console.WriteLine("Selected index changed");
         }
 
         private void ChipItem_DeleteChip(object sender, RoutedEventArgs e)
