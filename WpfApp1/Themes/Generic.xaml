@@ -59,17 +59,30 @@
                                 <TextBox x:Name="SearchBox" MinWidth="50">
                                 </TextBox>
                             </StackPanel>
-                            <ListBox  x:Name="ListItems">
-                                <ListBox.GroupStyle>
-                                    <GroupStyle>
-                                        <GroupStyle.HeaderTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Path=Name}" />
-                                            </DataTemplate>
-                                        </GroupStyle.HeaderTemplate>
-                                    </GroupStyle>
-                                </ListBox.GroupStyle>
-                            </ListBox>
+                            <Popup x:Name="pupSelectionDate"
+                                   PlacementTarget="{Binding ElementName=SearchBox}"
+                                   IsOpen="{Binding IsFocused, ElementName=SearchBox, Mode=OneWay}"
+                                   StaysOpen="True"
+                                   HorizontalAlignment="Center">
+   
+                                <Border >
+                                    <ListBox  x:Name="ListItems">
+                                        <ListBox.GroupStyle>
+                                            <GroupStyle>
+                                                <GroupStyle.HeaderTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding Path=Name}" />
+                                                    </DataTemplate>
+                                                </GroupStyle.HeaderTemplate>
+                                            </GroupStyle>
+                                        </ListBox.GroupStyle>
+                                    </ListBox>
+                                </Border>
+                            </Popup>
+                        
+                            
+                            
+                            
                         </StackPanel>
                     </Border>
                 </ControlTemplate>
