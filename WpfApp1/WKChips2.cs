@@ -216,7 +216,7 @@ namespace WpfApp1
         {
             base.OnApplyTemplate();
             _chipsItem = (ItemsControl)GetTemplateChild("ChipsItems");
-            listBox = (ListBox)GetTemplateChild("Anagrafica");
+            listBox = (ListBox)GetTemplateChild("ListItems");
             _listTo = (ListBox)GetTemplateChild("ListTo");
             collectionView = CollectionViewSource.GetDefaultView(ItemsSource);
             collectionView.Filter = CustomerFilter;
@@ -238,13 +238,17 @@ namespace WpfApp1
             var chipItem = new WKChip();
             //TODO CHANGE FOR MANAGE GENERIC TYPES
             var user = listBox.SelectedItem as User;
-            chipItem.InfoUser = user.Name;
-            _listTo.Items.Add(chipItem);
-            lstChip.Add(chipItem);
+            if (user != null)
+            {
+                chipItem.InfoUser = user.Name;
+                _listTo.Items.Add(chipItem);
+                lstChip.Add(chipItem);
 
-            chipItem.DeleteChip += ChipItem_DeleteChip;
-            //_listTo.Items.Add();
-            _searchBox.Text = default(string);
+                chipItem.DeleteChip += ChipItem_DeleteChip;
+                //_listTo.Items.Add();
+                _searchBox.Text = default(string);
+            }
+           
         }
 
         private void ChipItem_DeleteChip(object sender, RoutedEventArgs e)
