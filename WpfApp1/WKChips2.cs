@@ -42,7 +42,7 @@ namespace WpfApp1
         // For demonstration purposes we raise the event when the MyButtonSimple is clicked
         private ItemsControl _chipsItem;
         private ComboBox _chipsCombobox = new ComboBox();
-        private ListBox treeView = new ListBox();
+        private ListBox anagrafica = new ListBox();
         private TextBox _searchBox = new TextBox();
         public static readonly DependencyProperty ItemsSourceProperty;
         public static readonly DependencyProperty ElementiDaVisualizzareProperty;
@@ -54,6 +54,8 @@ namespace WpfApp1
         private DataTemplate data = new DataTemplate();
         private string _filterString = string.Empty;
         public event PropertyChangedEventHandler PropertyChanged;
+        private ListBox _listTo = new ListBox();
+        private List<WKChip> lstChip;
 
         public string FilterString
         {
@@ -171,7 +173,7 @@ namespace WpfApp1
             if (item != null)
             {
                 var viewElements = e.NewValue as string;
-                if (item.treeView == null)
+                if (item.anagrafica == null)
                     item._viewElement = viewElements;
                 else
                     //item.SetViewElemtents(viewElements);
@@ -188,7 +190,7 @@ namespace WpfApp1
 
         private void SetViewElemtents(string viewElements)
         {
-            this.treeView.DisplayMemberPath = viewElements;
+            this.anagrafica.DisplayMemberPath = viewElements;
         }
 
         /// <summary>
@@ -202,7 +204,7 @@ namespace WpfApp1
             if (_wkChips2 != null)
             {
                 var users = e.NewValue as IEnumerable;
-                if (_wkChips2.treeView != null)
+                if (_wkChips2.anagrafica != null)
                     _wkChips2.SetItemSource(users);
             }
         }
@@ -213,25 +215,47 @@ namespace WpfApp1
         /// <param name="e">Lista da inserire</param>
         private void SetItemSource(IEnumerable e)
         {
-            this.treeView.ItemsSource = e;
+            this.anagrafica.ItemsSource = e;
         }
 
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
             _chipsItem = (ItemsControl)GetTemplateChild("ChipsItems");
-            treeView = (ListBox)GetTemplateChild("TrvCombobox");
+            anagrafica = (ListBox)GetTemplateChild("Anagrafica");
+            _listTo = (ListBox)GetTemplateChild("ListTo");
             collectionView = CollectionViewSource.GetDefaultView(ItemsSource);
             collectionView.Filter = CustomerFilter;
             if (!string.IsNullOrEmpty(GroupNameProp))
             {
                 collectionView.GroupDescriptions.Add(new PropertyGroupDescription(GroupNameProp));
             }
-            treeView.ItemsSource = collectionView;
-            treeView.DisplayMemberPath = _viewElement;
-
+            anagrafica.ItemsSource = collectionView;
+            anagrafica.DisplayMemberPath = _viewElement;
+            anagrafica.SelectionChanged += TreeView_SelectionChanged;
             _searchBox = (TextBox)GetTemplateChild("SearchBox");
             _searchBox.TextChanged += _searchBox_TextChanged;
+            lstChip = new List<WKChip>();
+
+        }
+
+        private void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var chipItem = new WKChip();
+            var user = anagrafica.Items.GetItemAt(anagrafica.SelectedIndex) as User;
+            chipItem.InfoUser = user.Name;
+            _listTo.Items.Add(chipItem);
+            lstChip.Add(chipItem);
+
+            chipItem.DeleteChip += ChipItem_DeleteChip;
+            //_listTo.Items.Add();
+            _searchBox.Text = default(string);
+        }
+
+        private void ChipItem_DeleteChip(object sender, RoutedEventArgs e)
+        {
+            lstChip.Remove(sender as WKChip);
+            _listTo.Items.Remove(sender as WKChip);
         }
 
         private void _searchBox_TextChanged(object sender, TextChangedEventArgs e)
