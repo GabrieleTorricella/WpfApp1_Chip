@@ -90,7 +90,7 @@
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                             </ItemsControl>
-                            <ListBox  x:Name="TrvCombobox">
+                            <ListBox  x:Name="ListItems">
                                 <ListBox.GroupStyle>
                                     <GroupStyle>
                                         <GroupStyle.HeaderTemplate>

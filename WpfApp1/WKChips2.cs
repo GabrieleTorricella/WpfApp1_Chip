@@ -4,20 +4,14 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace WpfApp1
 {
+
+
     /// <summary>
     /// Chip selector
     /// </summary>
@@ -42,7 +36,7 @@ namespace WpfApp1
         // For demonstration purposes we raise the event when the MyButtonSimple is clicked
         private ItemsControl _chipsItem;
         private ComboBox _chipsCombobox = new ComboBox();
-        private ListBox treeView = new ListBox();
+        private ListBox listBox = new ListBox();
         private TextBox _searchBox = new TextBox();
         public static readonly DependencyProperty ItemsSourceProperty;
         public static readonly DependencyProperty ElementiDaVisualizzareProperty;
@@ -111,9 +105,9 @@ namespace WpfApp1
         private bool CustomerFilter(object item)
         {
             //IGroup customer = item as IGroup;
-            if (SearchProperties != null && SearchProperties.Any())
+            if (!string.IsNullOrEmpty(_filterString) && SearchProperties != null && SearchProperties.Any())
             {
-                return SearchProperties.Any(x => (item.GetType().GetProperty(x).GetValue(item)?.ToString() ?? string.Empty).Contains(_filterString));
+                return SearchProperties.Any(x => (item.GetType().GetProperty(x).GetValue(item)?.ToString().ToLower() ?? string.Empty).Contains(_filterString.ToLower()));
             }
             return true;
         }
@@ -171,7 +165,7 @@ namespace WpfApp1
             if (item != null)
             {
                 var viewElements = e.NewValue as string;
-                if (item.treeView == null)
+                if (item.listBox == null)
                     item._viewElement = viewElements;
                 else
                     //item.SetViewElemtents(viewElements);
@@ -188,7 +182,7 @@ namespace WpfApp1
 
         private void SetViewElemtents(string viewElements)
         {
-            this.treeView.DisplayMemberPath = viewElements;
+            this.listBox.DisplayMemberPath = viewElements;
         }
 
         /// <summary>
@@ -202,7 +196,7 @@ namespace WpfApp1
             if (_wkChips2 != null)
             {
                 var users = e.NewValue as IEnumerable;
-                if (_wkChips2.treeView != null)
+                if (_wkChips2.listBox != null)
                     _wkChips2.SetItemSource(users);
             }
         }
@@ -213,26 +207,28 @@ namespace WpfApp1
         /// <param name="e">Lista da inserire</param>
         private void SetItemSource(IEnumerable e)
         {
-            this.treeView.ItemsSource = e;
+            this.listBox.ItemsSource = e;
         }
 
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
             _chipsItem = (ItemsControl)GetTemplateChild("ChipsItems");
-            treeView = (ListBox)GetTemplateChild("TrvCombobox");
+            listBox = (ListBox)GetTemplateChild("ListItems");
             collectionView = CollectionViewSource.GetDefaultView(ItemsSource);
             collectionView.Filter = CustomerFilter;
             if (!string.IsNullOrEmpty(GroupNameProp))
             {
                 collectionView.GroupDescriptions.Add(new PropertyGroupDescription(GroupNameProp));
             }
-            treeView.ItemsSource = collectionView;
-            treeView.DisplayMemberPath = _viewElement;
+            listBox.ItemsSource = collectionView;
+            listBox.DisplayMemberPath = _viewElement;
 
             _searchBox = (TextBox)GetTemplateChild("SearchBox");
             _searchBox.TextChanged += _searchBox_TextChanged;
         }
+
+
 
         private void _searchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
