@@ -4,20 +4,14 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace WpfApp1
 {
+
+
     /// <summary>
     /// Chip selector
     /// </summary>
@@ -42,7 +36,7 @@ namespace WpfApp1
         // For demonstration purposes we raise the event when the MyButtonSimple is clicked
         private ItemsControl _chipsItem;
         private ComboBox _chipsCombobox = new ComboBox();
-        private ListBox anagrafica = new ListBox();
+        private ListBox listBox = new ListBox();
         private TextBox _searchBox = new TextBox();
         public static readonly DependencyProperty ItemsSourceProperty;
         public static readonly DependencyProperty ElementiDaVisualizzareProperty;
@@ -113,9 +107,9 @@ namespace WpfApp1
         private bool CustomerFilter(object item)
         {
             //IGroup customer = item as IGroup;
-            if (SearchProperties != null && SearchProperties.Any())
+            if (!string.IsNullOrEmpty(_filterString) && SearchProperties != null && SearchProperties.Any())
             {
-                return SearchProperties.Any(x => (item.GetType().GetProperty(x).GetValue(item)?.ToString() ?? string.Empty).Contains(_filterString));
+                return SearchProperties.Any(x => (item.GetType().GetProperty(x).GetValue(item)?.ToString().ToLower() ?? string.Empty).Contains(_filterString.ToLower()));
             }
             return true;
         }
@@ -173,7 +167,7 @@ namespace WpfApp1
             if (item != null)
             {
                 var viewElements = e.NewValue as string;
-                if (item.anagrafica == null)
+                if (item.listBox == null)
                     item._viewElement = viewElements;
                 else
                     //item.SetViewElemtents(viewElements);
@@ -190,7 +184,7 @@ namespace WpfApp1
 
         private void SetViewElemtents(string viewElements)
         {
-            this.anagrafica.DisplayMemberPath = viewElements;
+            this.listBox.DisplayMemberPath = viewElements;
         }
 
         /// <summary>
@@ -204,7 +198,7 @@ namespace WpfApp1
             if (_wkChips2 != null)
             {
                 var users = e.NewValue as IEnumerable;
-                if (_wkChips2.anagrafica != null)
+                if (_wkChips2.listBox != null)
                     _wkChips2.SetItemSource(users);
             }
         }
@@ -215,14 +209,14 @@ namespace WpfApp1
         /// <param name="e">Lista da inserire</param>
         private void SetItemSource(IEnumerable e)
         {
-            this.anagrafica.ItemsSource = e;
+            this.listBox.ItemsSource = e;
         }
 
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
             _chipsItem = (ItemsControl)GetTemplateChild("ChipsItems");
-            anagrafica = (ListBox)GetTemplateChild("Anagrafica");
+            listBox = (ListBox)GetTemplateChild("ListItems");
             _listTo = (ListBox)GetTemplateChild("ListTo");
             collectionView = CollectionViewSource.GetDefaultView(ItemsSource);
             collectionView.Filter = CustomerFilter;
@@ -230,26 +224,31 @@ namespace WpfApp1
             {
                 collectionView.GroupDescriptions.Add(new PropertyGroupDescription(GroupNameProp));
             }
-            anagrafica.ItemsSource = collectionView;
-            anagrafica.DisplayMemberPath = _viewElement;
-            anagrafica.SelectionChanged += Anagrafica_SelectionChanged;
+            listBox.ItemsSource = collectionView;
+            listBox.DisplayMemberPath = _viewElement;
+            listBox.SelectionChanged += ListBoxItems_SelectionChanged;
             _searchBox = (TextBox)GetTemplateChild("SearchBox");
             _searchBox.TextChanged += _searchBox_TextChanged;
             lstChip = new List<WKChip>();
 
         }
 
-        private void Anagrafica_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ListBoxItems_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var chipItem = new WKChip();
-            var user = anagrafica.Items.GetItemAt(anagrafica.SelectedIndex) as User;
-            chipItem.InfoUser = user.Name;
-            _listTo.Items.Add(chipItem);
-            lstChip.Add(chipItem);
+            //TODO CHANGE FOR MANAGE GENERIC TYPES
+            var user = listBox.SelectedItem as User;
+            if (user != null)
+            {
+                chipItem.InfoUser = user.Name;
+                _listTo.Items.Add(chipItem);
+                lstChip.Add(chipItem);
 
-            chipItem.DeleteChip += ChipItem_DeleteChip;
-            //_listTo.Items.Add();
-            _searchBox.Text = default(string);
+                chipItem.DeleteChip += ChipItem_DeleteChip;
+                //_listTo.Items.Add();
+                _searchBox.Text = default(string);
+            }
+           
         }
 
         private void ChipItem_DeleteChip(object sender, RoutedEventArgs e)
@@ -257,6 +256,8 @@ namespace WpfApp1
             lstChip.Remove(sender as WKChip);
             _listTo.Items.Remove(sender as WKChip);
         }
+
+
 
         private void _searchBox_TextChanged(object sender, TextChangedEventArgs e)
         {

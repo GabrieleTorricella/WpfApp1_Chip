@@ -53,7 +53,7 @@
                                     <TextBox x:Name="SearchBox" MinWidth="50">
                                     </TextBox>
                                 </ListBox>
-                                <ListBox  x:Name="Anagrafica">
+                                <ListBox  x:Name="ListItems">
                                     <ListBox.GroupStyle>
                                         <GroupStyle>
                                             <GroupStyle.HeaderTemplate>
