@@ -48,6 +48,8 @@ namespace WpfApp1
         private DataTemplate data = new DataTemplate();
         private string _filterString = string.Empty;
         public event PropertyChangedEventHandler PropertyChanged;
+        private ListBox _listTo = new ListBox();
+        private List<WKChip> lstChip;
 
         public string FilterString
         {
@@ -214,7 +216,8 @@ namespace WpfApp1
         {
             base.OnApplyTemplate();
             _chipsItem = (ItemsControl)GetTemplateChild("ChipsItems");
-            listBox = (ListBox)GetTemplateChild("ListItems");
+            listBox = (ListBox)GetTemplateChild("Anagrafica");
+            _listTo = (ListBox)GetTemplateChild("ListTo");
             collectionView = CollectionViewSource.GetDefaultView(ItemsSource);
             collectionView.Filter = CustomerFilter;
             if (!string.IsNullOrEmpty(GroupNameProp))
@@ -223,9 +226,31 @@ namespace WpfApp1
             }
             listBox.ItemsSource = collectionView;
             listBox.DisplayMemberPath = _viewElement;
-
+            listBox.SelectionChanged += ListBoxItems_SelectionChanged;
             _searchBox = (TextBox)GetTemplateChild("SearchBox");
             _searchBox.TextChanged += _searchBox_TextChanged;
+            lstChip = new List<WKChip>();
+
+        }
+
+        private void ListBoxItems_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var chipItem = new WKChip();
+            //TODO CHANGE FOR MANAGE GENERIC TYPES
+            var user = listBox.SelectedItem as User;
+            chipItem.InfoUser = user.Name;
+            _listTo.Items.Add(chipItem);
+            lstChip.Add(chipItem);
+
+            chipItem.DeleteChip += ChipItem_DeleteChip;
+            //_listTo.Items.Add();
+            _searchBox.Text = default(string);
+        }
+
+        private void ChipItem_DeleteChip(object sender, RoutedEventArgs e)
+        {
+            lstChip.Remove(sender as WKChip);
+            _listTo.Items.Remove(sender as WKChip);
         }
 
 

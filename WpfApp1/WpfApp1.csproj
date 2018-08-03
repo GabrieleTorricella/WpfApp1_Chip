@@ -57,7 +57,6 @@
     <Compile Include="User.cs" />
     <Compile Include="WKChip.cs" />
     <Compile Include="WKChips2.cs" />
-    <Compile Include="WKChipsSelector.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
