@@ -232,14 +232,14 @@ namespace WpfApp1
             }
             anagrafica.ItemsSource = collectionView;
             anagrafica.DisplayMemberPath = _viewElement;
-            anagrafica.SelectionChanged += TreeView_SelectionChanged;
+            anagrafica.SelectionChanged += Anagrafica_SelectionChanged;
             _searchBox = (TextBox)GetTemplateChild("SearchBox");
             _searchBox.TextChanged += _searchBox_TextChanged;
             lstChip = new List<WKChip>();
 
         }
 
-        private void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Anagrafica_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var chipItem = new WKChip();
             var user = anagrafica.Items.GetItemAt(anagrafica.SelectedIndex) as User;
