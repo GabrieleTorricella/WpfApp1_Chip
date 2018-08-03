@@ -18,7 +18,7 @@
         <ListBox x:Name="lstChips" Grid.Column="1">
             
         </ListBox>-->
-        <local:WKChips2 x:Name="Chip" GroupNameProp="GroupName"/>
+        <local:WKChipsManager x:Name="Chip" GroupNameProp="GroupName"/>
         <!--<ListBox Name="lstItem" HorizontalAlignment="Left" Margin="39,51,0,0" VerticalAlignment="Top"
                  Height="158" Width="379" >
             <TextBox Name="a" Height="55" TextWrapping="Wrap" Text="" Width="195" GotFocus="a_GotFocus"/>

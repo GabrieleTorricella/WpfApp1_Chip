@@ -15,9 +15,9 @@ namespace WpfApp1
     /// <summary>
     /// Chip selector
     /// </summary>
-    public class WKChips2 : Control, INotifyPropertyChanged
+    public class WKChipsManager : Control, INotifyPropertyChanged
     {
-        public static readonly RoutedEvent TextChangedEvent = EventManager.RegisterRoutedEvent("TextChanged", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(WKChips2));
+        public static readonly RoutedEvent TextChangedEvent = EventManager.RegisterRoutedEvent("TextChanged", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(WKChipsManager));
 
         // Provide CLR accessors for the event
         public event RoutedEventHandler TextChanged
@@ -29,7 +29,7 @@ namespace WpfApp1
         // This method raises the Tap event
         void RaiseTextChangedEvent()
         {
-            RoutedEventArgs newEventArgs = new RoutedEventArgs(WKChips2.TextChangedEvent);
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(WKChipsManager.TextChangedEvent);
             RaiseEvent(newEventArgs);
         }
 
@@ -58,50 +58,50 @@ namespace WpfApp1
         }
         public string ElementiDaVisualizzare
         {
-            get => (string)base.GetValue(WKChips2.ElementiDaVisualizzareProperty);
-            set { if (value == null) { base.ClearValue(WKChips2.ElementiDaVisualizzareProperty); return; } base.SetValue(WKChips2.ElementiDaVisualizzareProperty, value); }
+            get => (string)base.GetValue(WKChipsManager.ElementiDaVisualizzareProperty);
+            set { if (value == null) { base.ClearValue(WKChipsManager.ElementiDaVisualizzareProperty); return; } base.SetValue(WKChipsManager.ElementiDaVisualizzareProperty, value); }
         }
         public IEnumerable<string> SearchProperties
         {
-            get => (IEnumerable<string>)base.GetValue(WKChips2.SearchPropertiesProperty);
-            set { if (value == null) { base.ClearValue(WKChips2.SearchPropertiesProperty); return; } base.SetValue(WKChips2.SearchPropertiesProperty, value); }
+            get => (IEnumerable<string>)base.GetValue(WKChipsManager.SearchPropertiesProperty);
+            set { if (value == null) { base.ClearValue(WKChipsManager.SearchPropertiesProperty); return; } base.SetValue(WKChipsManager.SearchPropertiesProperty, value); }
         }
         public string GroupNameProp
         {
-            get => (string)base.GetValue(WKChips2.GroupNameProperty);
-            set { if (value == null) { base.ClearValue(WKChips2.GroupNameProperty); return; } base.SetValue(WKChips2.GroupNameProperty, value); }
+            get => (string)base.GetValue(WKChipsManager.GroupNameProperty);
+            set { if (value == null) { base.ClearValue(WKChipsManager.GroupNameProperty); return; } base.SetValue(WKChipsManager.GroupNameProperty, value); }
         }
 
-        static WKChips2()
+        static WKChipsManager()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(WKChips2), new FrameworkPropertyMetadata(typeof(WKChips2)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(WKChipsManager), new FrameworkPropertyMetadata(typeof(WKChipsManager)));
 
-            WKChips2.ItemsSourceProperty =
+            WKChipsManager.ItemsSourceProperty =
                 DependencyProperty.Register("ItemsSource",
                 typeof(IEnumerable),
-                typeof(WKChips2),
-                new FrameworkPropertyMetadata(null, new PropertyChangedCallback(WKChips2.OnItemsSourceChanged)));
+                typeof(WKChipsManager),
+                new FrameworkPropertyMetadata(null, new PropertyChangedCallback(WKChipsManager.OnItemsSourceChanged)));
 
-            WKChips2.ElementiDaVisualizzareProperty =
+            WKChipsManager.ElementiDaVisualizzareProperty =
                 DependencyProperty.Register(
                     "ElementiDaVisualizzare",
                     typeof(string),
-                    typeof(WKChips2),
-                    new FrameworkPropertyMetadata(null, new PropertyChangedCallback(WKChips2.ElementiDaVisualizzareCallback)));
+                    typeof(WKChipsManager),
+                    new FrameworkPropertyMetadata(null, new PropertyChangedCallback(WKChipsManager.ElementiDaVisualizzareCallback)));
 
-            WKChips2.SearchPropertiesProperty =
+            WKChipsManager.SearchPropertiesProperty =
                DependencyProperty.Register(
                    "SearchProperties",
                    typeof(IEnumerable<string>),
-                   typeof(WKChips2),
-                   new FrameworkPropertyMetadata(null, new PropertyChangedCallback(WKChips2.SearchPropertiesCallback)));
+                   typeof(WKChipsManager),
+                   new FrameworkPropertyMetadata(null, new PropertyChangedCallback(WKChipsManager.SearchPropertiesCallback)));
 
-            WKChips2.GroupNameProperty =
+            WKChipsManager.GroupNameProperty =
                DependencyProperty.Register(
                    "GroupName",
                    typeof(string),
-                   typeof(WKChips2),
-                   new FrameworkPropertyMetadata(null, new PropertyChangedCallback(WKChips2.GroupNameCallBack)));
+                   typeof(WKChipsManager),
+                   new FrameworkPropertyMetadata(null, new PropertyChangedCallback(WKChipsManager.GroupNameCallBack)));
         }
 
         private bool CustomerFilter(object item)
@@ -128,15 +128,15 @@ namespace WpfApp1
         [Bindable(true), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Category("Content")]
         public IEnumerable ItemsSource
         {
-            get => (IEnumerable)base.GetValue(WKChips2.ItemsSourceProperty);
+            get => (IEnumerable)base.GetValue(WKChipsManager.ItemsSourceProperty);
             set
             {
                 if (value == null)
                 {
-                    base.ClearValue(WKChips2.ItemsSourceProperty);
+                    base.ClearValue(WKChipsManager.ItemsSourceProperty);
                     return;
                 }
-                base.SetValue(WKChips2.ItemsSourceProperty, value);
+                base.SetValue(WKChipsManager.ItemsSourceProperty, value);
             }
         }
 
@@ -163,7 +163,7 @@ namespace WpfApp1
         /// <param name="e">Fa riferimento ai cambiamenti</param>
         private static void ElementiDaVisualizzareCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var item = d as WKChips2;
+            var item = d as WKChipsManager;
             if (item != null)
             {
                 var viewElements = e.NewValue as string;
@@ -194,7 +194,7 @@ namespace WpfApp1
         /// <param name="e">Fa riferimento ai cambiamenti</param>
         private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var _wkChips2 = d as WKChips2;
+            var _wkChips2 = d as WKChipsManager;
             if (_wkChips2 != null)
             {
                 var users = e.NewValue as IEnumerable;

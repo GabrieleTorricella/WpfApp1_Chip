@@ -31,10 +31,10 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type local:WKChips2}">
+    <Style TargetType="{x:Type local:WKChipsManager}">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type local:WKChips2}">
+                <ControlTemplate TargetType="{x:Type local:WKChipsManager}">
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
@@ -71,4 +71,6 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+
 </ResourceDictionary>
