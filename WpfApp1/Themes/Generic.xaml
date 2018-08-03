@@ -10,7 +10,7 @@
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}" >
-                        <Grid HorizontalAlignment="Left" Height="30" Margin="10,92,0,0" VerticalAlignment="Top" MinWidth="150">
+                        <Grid HorizontalAlignment="Left" Height="30" Margin="0,0,0,0" VerticalAlignment="Top" MinWidth="150">
                             <!--<Ellipse Fill="Transparent" Height="100" Margin="0,0,280,0" Stroke="Black" VerticalAlignment="Top"/>-->
                             <!--<Ellipse Fill="Transparent" HorizontalAlignment="Left" Height="100" Margin="280,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="100"/>-->
                             <Border CornerRadius="13" BorderBrush="Gray" BorderThickness="1" DockPanel.Dock="Top" Width="Auto">
@@ -21,7 +21,7 @@
                                                TextTrimming="WordEllipsis" Text="{Binding Path=User.Name}" >
                                         <TextBox x:Name="MailUserEdit" Height="10" TextWrapping="Wrap" MinWidth="60" Margin="150,5,10,5"/>
                                     </TextBlock>
-                                    <Button x:Name="Delete" Content="X" MinWidth="10" Margin="0,5,5,5" Width="20"/>
+                                    <Button x:Name="Delete" Content="X" MinWidth="10" Margin="0,5,5,5" Width="20" Background="Transparent"/>
                                 </DockPanel>
                             </Border>
                         </Grid>
@@ -64,7 +64,7 @@
                                    IsOpen="{Binding IsFocused, ElementName=SearchBox, Mode=OneWay}"
                                    StaysOpen="True"
                                    HorizontalAlignment="Center">   
-                                <Border >
+                                <Border>
                                     <ListBox  x:Name="ListItems">
                                         <ListBox.GroupStyle>
                                             <GroupStyle>
