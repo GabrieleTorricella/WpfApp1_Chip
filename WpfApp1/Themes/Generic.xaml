@@ -38,7 +38,7 @@
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel>
                             <ItemsControl x:Name="ChipsItems">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
@@ -48,21 +48,23 @@
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                             </ItemsControl>
-                            <ListBox x:Name="ListTo">
-                            </ListBox>
-                            <TextBox x:Name="SearchBox" MinWidth="50">
-                            </TextBox>
-                            <ListBox  x:Name="Anagrafica">
-                                <ListBox.GroupStyle>
-                                    <GroupStyle>
-                                        <GroupStyle.HeaderTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Path=Name}" />
-                                            </DataTemplate>
-                                        </GroupStyle.HeaderTemplate>
-                                    </GroupStyle>
-                                </ListBox.GroupStyle>
-                            </ListBox>
+                            <StackPanel Orientation="Horizontal">
+                                <ListBox x:Name="ListTo">
+                                    <TextBox x:Name="SearchBox" MinWidth="50">
+                                    </TextBox>
+                                </ListBox>
+                                <ListBox  x:Name="Anagrafica">
+                                    <ListBox.GroupStyle>
+                                        <GroupStyle>
+                                            <GroupStyle.HeaderTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Path=Name}" />
+                                                </DataTemplate>
+                                            </GroupStyle.HeaderTemplate>
+                                        </GroupStyle>
+                                    </ListBox.GroupStyle>
+                                </ListBox>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
                 </ControlTemplate>
