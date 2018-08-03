@@ -63,8 +63,7 @@
                                    PlacementTarget="{Binding ElementName=SearchBox}"
                                    IsOpen="{Binding IsFocused, ElementName=SearchBox, Mode=OneWay}"
                                    StaysOpen="True"
-                                   HorizontalAlignment="Center">
-   
+                                   HorizontalAlignment="Center">   
                                 <Border >
                                     <ListBox  x:Name="ListItems">
                                         <ListBox.GroupStyle>
@@ -78,10 +77,8 @@
                                         </ListBox.GroupStyle>
                                     </ListBox>
                                 </Border>
-                            </Popup>
-                            
-                        </StackPanel>
-                        
+                            </Popup>                            
+                        </StackPanel>                        
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
