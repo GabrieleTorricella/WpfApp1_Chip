@@ -48,17 +48,17 @@
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                             </ItemsControl>
-                            <StackPanel Orientation="Horizontal">
-                                <ListBox x:Name="ListTo">
+                            <WrapPanel Orientation="Horizontal" ScrollViewer.CanContentScroll="False">
+                                <ListBox x:Name="ListTo" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                     <ListBox.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Horizontal"/>
+                                            <WrapPanel Orientation="Horizontal"/>
                                         </ItemsPanelTemplate>
                                     </ListBox.ItemsPanel>
                                 </ListBox>
-                                <TextBox x:Name="SearchBox" MinWidth="50">
+                                <TextBox x:Name="SearchBox" MinWidth="100">
                                 </TextBox>
-                            </StackPanel>
+                            </WrapPanel>
                             <ListBox  x:Name="ListItems">
                                 <ListBox.GroupStyle>
                                     <GroupStyle>

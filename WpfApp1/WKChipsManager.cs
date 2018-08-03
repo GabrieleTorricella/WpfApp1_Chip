@@ -47,7 +47,6 @@ namespace WpfApp1
         private string _filterString = string.Empty;
         public event PropertyChangedEventHandler PropertyChanged;
         private ListBox _listTo = new ListBox();
-        private List<WKChip> lstChip;
 
         public string FilterString
         {
@@ -168,10 +167,7 @@ namespace WpfApp1
                 if (item.listBox == null)
                     item._viewElement = viewElements;
                 else
-                    //item.SetViewElemtents(viewElements);
                     item._viewElement = viewElements;
-                //var el = item._itemSource != null ? item._itemSource.ToList() as List<Group> : item.ItemsSource.ToList() as List<Group>;
-                //item._viewElement = el.Where(i => i.Items = viewElements);
             }
         }
 
@@ -213,7 +209,6 @@ namespace WpfApp1
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            //_chipsItem = (ItemsControl)GetTemplateChild("ChipsItems");
             listBox = (ListBox)GetTemplateChild("ListItems");
             _listTo = (ListBox)GetTemplateChild("ListTo");
             collectionView = CollectionViewSource.GetDefaultView(ItemsSource);
@@ -228,7 +223,6 @@ namespace WpfApp1
             _searchBox = (TextBox)GetTemplateChild("SearchBox");
             _searchBox.TextChanged += _searchBox_TextChanged;
             _searchBox.Focus();
-            lstChip = new List<WKChip>();
         }
 
         private void ListBoxItems_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -241,34 +235,21 @@ namespace WpfApp1
                 chipItem.InfoUser = user.Name;
                 _listTo.Items.Add(chipItem);
                 chipItem.DeleteChip += ChipItem_DeleteChip;
-                //_listTo.Items.Add();
                 _searchBox.Text = default(string);
             }
             e.Handled = true;
-            //listBox.SelectedIndex = -1;
+            listBox.SelectedIndex = -1;
             Console.WriteLine("Selected index changed");
         }
 
         private void ChipItem_DeleteChip(object sender, RoutedEventArgs e)
         {
-            lstChip.Remove(sender as WKChip);
             _listTo.Items.Remove(sender as WKChip);
         }
 
-
-
         private void _searchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            //List<IGroup> result = new List<IGroup>();
-            //result.AddRange(ItemsSource.Where(x => x.GroupName.Contains(_searchBox.Text)));
-            ////var res = ItemsSource.Except(result).Where(x=>x.Items.GetType();
-            ////var res2 = res.ToList().ForEach(x=> x.)
-            ////result.AddRange(ItemsSource.Where(x => !x.GroupName.Contains(_searchBox.Text)));
-            //treeView.ItemsSource = result;
-            //treeView.UpdateLayout();
             FilterString = _searchBox.Text;
-            //TextValue = _searchBox.Text;
-            //RaiseTextChangedEvent(); 
         }
     }
 }
