@@ -20,54 +20,83 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
+        List<WKChip> chip;
         public MainWindow()
         {
             InitializeComponent();
             OnLoad();
+            //chip = Chip.chips = new List<WKChip>();
+            //prova.Tap += Chip1_Tap;
+            //chip.Add(prova);
+            //WKChip c = new WKChip();
+            //c.Tap += Chip1_Tap;
+            //lstChips.Items.Add(c);
         }
 
+        //private void Chip1_Tap(object sender, RoutedEventArgs e)
+        //{
+        //    //lstChips.Remove(sender as WKChip);
+        //    lstChips.Items.Remove(sender as WKChip);
+        //}
+
+        /*private void OldOnLoad()
+        //{
+        //    Chip.ItemsSource = new List<Group>()
+        //    {
+        //        new Group()
+        //        {
+        //            GroupName ="parties",
+        //            Items =  new List<User>()
+        //                {
+        //                    new User("Pippo","Pappo"),
+        //                    new User("Toto","asd","aaaaaaaaa@bbbbbbb.com"),
+        //                    new User("Toto","asd","aaaaaaaaa@bbbbbbb.com")
+        //                }
+        //        },
+        //        new Group()
+        //        {
+        //            GroupName ="other",
+        //            Items =  new List<User>()
+        //                {
+        //                    new User("Pippo","Pappo"),
+        //                    new User("Toto","asd","aaaaaaaaa@bbbbbbb.com"),
+        //                    new User("Toto","asd","aaaaaaaaa@bbbbbbb.com")
+        //                }
+        //        }
+
+        //    };
+        //    Chip.ElementiDaVisualizzare = "Name";
+        //    //var dic = new Dictionary<string, IEnumerable<User>>();
+        //    //dic.Add("parties", new List<User>()
+        //    //    {
+        //    //        new User("Pippo","Pappo"),
+        //    //        new User("Toto","asd","aaaaaaaaa@bbbbbbb.com"),
+        //    //        new User("Toto","asd","aaaaaaaaa@bbbbbbb.com")
+        //    //    });
+        //    //dic.Add("other",
+        //    //    new List<User>()
+        //    //    {
+        //    //        new User("Pippo","Pappo"),
+        //    //        new User("Toto","asd","aaaaaaaaa@bbbbbbb.com"),
+        //    //        new User("Toto","asd","aaaaaaaaa@bbbbbbb.com")
+        //    //    })
+        //    //;
+        }*/
         private void OnLoad()
         {
-            Chip.ItemsSource = new List<Group>()
+            Chip.ItemsSource = new List<User>()
             {
-                new Group()
-                {
-                    GroupName ="parties",
-                    Items =  new List<User>()
-                        {
-                            new User("Pippo","Pappo"),
-                            new User("Toto","asd","aaaaaaaaa@bbbbbbb.com"),
-                            new User("Toto","asd","aaaaaaaaa@bbbbbbb.com")
-                        }
-                },
-                new Group()
-                {
-                    GroupName ="other",
-                    Items =  new List<User>()
-                        {
-                            new User("Pippo","Pappo"),
-                            new User("Toto","asd","aaaaaaaaa@bbbbbbb.com"),
-                            new User("Toto","asd","aaaaaaaaa@bbbbbbb.com")
-                        }
-                }
-
+                new User("Pippo","Pappo"){ GroupName="aa"},
+                new User("Toto","asd","aaaaaaaaa@bbbbbbb.com"){ GroupName="aa"},
+                new User("Toto","asd","aaaaasdddaaaa@bbbbbbb.com"){GroupName ="bb"},
+                new User("SSS","asd","adfasdsfdsafdasaaaaaaaaa@bbbbbbb.com"){GroupName ="bb"},
+                new User("TADFDto","asd","aaaaaaaadfadfasaa@bbbbbbb.com"){GroupName ="bb"},
+                new User("adfsfasd","zzz","aaaaaaaadfasdfadfasaa@bbbbbbb.com"){GroupName ="cc"}
             };
+
             Chip.ElementiDaVisualizzare = "Name";
-            //var dic = new Dictionary<string, IEnumerable<User>>();
-            //dic.Add("parties", new List<User>()
-            //    {
-            //        new User("Pippo","Pappo"),
-            //        new User("Toto","asd","aaaaaaaaa@bbbbbbb.com"),
-            //        new User("Toto","asd","aaaaaaaaa@bbbbbbb.com")
-            //    });
-            //dic.Add("other",
-            //    new List<User>()
-            //    {
-            //        new User("Pippo","Pappo"),
-            //        new User("Toto","asd","aaaaaaaaa@bbbbbbb.com"),
-            //        new User("Toto","asd","aaaaaaaaa@bbbbbbb.com")
-            //    })
-            //;
+            Chip.SearchProperties = new List<string>() { "Name", "Surname", "Mail" };
+
         }
     }
 }

@@ -39,6 +39,7 @@ namespace WpfApp1
         private string _viewElement = default(string);
         private IEnumerable<Group> _itemSource = default(IEnumerable<Group>);
         private DataTemplate data = new DataTemplate();
+        public List<WKChip> chips;
 
         /// <summary>
         /// Proprietà della dependency property ItemsSource
@@ -69,7 +70,7 @@ namespace WpfApp1
             DefaultStyleKeyProperty.OverrideMetadata(typeof(WKChipsSelector), new FrameworkPropertyMetadata(typeof(WKChipsSelector)));
 
             WKChipsSelector.ItemsSourceProperty =
-                DependencyProperty.Register("" +
+                DependencyProperty.Register(
                 "ItemsSource",
                 typeof(IEnumerable<Group>),
                 typeof(WKChipsSelector),
@@ -143,6 +144,13 @@ namespace WpfApp1
             treeView = (TreeView)GetTemplateChild("TrvCombobox");
             treeView.ItemsSource = _itemSource != null ? _itemSource : ItemsSource;
             treeView.DisplayMemberPath = _viewElement;
+            chips = new List<WKChip>();
+
+        }
+
+        private void Chip_Tap(object sender, RoutedEventArgs e)
+        {
+            chips.Remove(sender as WKChip);
         }
     }
 }

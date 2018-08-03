@@ -8,11 +8,12 @@ namespace WpfApp1
 {
     public class User
     {
-        private string _name, _surname, _mail;
+        private string _name, _surname, _mail, _groupName;
 
         public string Name { get => _name; set => _name = value; }
         public string Surname { get => _surname; set => _surname = value; }
         public string Mail { get => _mail; set => _mail = value; }
+        public string GroupName { get => _groupName; set => _groupName = value; }
 
         public User()
         {
@@ -28,6 +29,10 @@ namespace WpfApp1
             Mail = mail;
         }
 
+        public User(string name, string surname, string mail, string groupName) : this(name, surname, mail)
+        {
+            GroupName = groupName;
+        }
 
     }
 }

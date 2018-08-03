@@ -32,7 +32,7 @@
                                             </DataTemplate>
                                         </HierarchicalDataTemplate.ItemTemplate>
                                     </HierarchicalDataTemplate>
-                                    
+
                                 </TreeView.ItemTemplate>
                             </TreeView>
                         </StackPanel>
@@ -48,10 +48,60 @@
                 <ControlTemplate TargetType="{x:Type local:WKChip}">
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" >
+                        <Grid HorizontalAlignment="Left" Height="30" Margin="10,92,0,0" VerticalAlignment="Top" MinWidth="150">
+                            <!--<Ellipse Fill="Transparent" Height="100" Margin="0,0,280,0" Stroke="Black" VerticalAlignment="Top"/>-->
+                            <!--<Ellipse Fill="Transparent" HorizontalAlignment="Left" Height="100" Margin="280,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="100"/>-->
+                            <Border CornerRadius="13" BorderBrush="Gray" BorderThickness="1" DockPanel.Dock="Top" Width="Auto">
+                                <DockPanel HorizontalAlignment="Left" Margin="-1" VerticalAlignment="Top" Height="30" MinWidth="150" Background="Transparent" Width="Auto" >
+                                    <Ellipse x:Name="PhotoUser" Fill="#FFF4F4F5" HorizontalAlignment="Left" 
+                                             Height="30" Margin="0,0,0,0" Stroke="Black" VerticalAlignment="Top" MinWidth="30"/>
+                                    <TextBlock x:Name="InformationUser" Margin="5,5,5,5" MinWidth="150" Background="Transparent" 
+                                               TextTrimming="WordEllipsis">
+                                        <TextBox x:Name="MailUserEdit" Height="10" TextWrapping="Wrap" MinWidth="60" Margin="150,5,10,5"/>
+                                    </TextBlock>
+                                    <Button x:Name="Delete" Content="X" MinWidth="10" Margin="0,5,5,5" Width="20"/>
+                                </DockPanel>
+                            </Border>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type local:WKChips2}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:WKChips2}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
-                        <StackPanel>
-                            <TextBlock x:Name="MailUser" Text="Prova textblocks"/>
-                            <TextBox x:Name="MailUserEditable" Text="Prova textbox" Visibility="{Binding IsEditable}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox x:Name="SearchBox"
+                                     MinWidth="20">
+
+                            </TextBox>
+                            <ItemsControl x:Name="ChipsItems">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"
+                                                    VerticalAlignment="Top" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                            <ListBox  x:Name="TrvCombobox">
+                                <ListBox.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.HeaderTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Path=Name}" />
+                                            </DataTemplate>
+                                        </GroupStyle.HeaderTemplate>
+                                    </GroupStyle>
+
+                                </ListBox.GroupStyle>
+                            </ListBox>                           
                         </StackPanel>
                     </Border>
                 </ControlTemplate>

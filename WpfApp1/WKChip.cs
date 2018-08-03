@@ -50,6 +50,7 @@ namespace WpfApp1
         private TextBox _mailUserEditable = new TextBox();
         private TextBlock _mailUser = new TextBlock();
         public static readonly DependencyProperty IsEditableProperty;
+        private Button delete = new Button();
 
         public bool? IsEditable
         {
@@ -92,10 +93,34 @@ namespace WpfApp1
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            _mailUserEditable = (TextBox)GetTemplateChild("MailUserEditable");
-            _mailUser = (TextBlock)GetTemplateChild("MailUser");
+            _mailUserEditable = (TextBox)GetTemplateChild("MailUserEdit");
+            _mailUser = (TextBlock)GetTemplateChild("InformationUser");
             _mailUserEditable.Visibility = (bool)!_isEditable ? Visibility.Hidden : Visibility.Visible;
             _mailUser.Visibility = (bool)_isEditable ? Visibility.Collapsed : Visibility.Visible;
+            delete = (Button)GetTemplateChild("Delete");
+            //delete.Click += new RoutedEventHandler(delete_Click);
+            delete.Click += Delete_Click;
         }
+
+        private void Delete_Click(object sender, RoutedEventArgs e)
+        {
+            RaiseTapEvent();
+        }
+
+        public static readonly RoutedEvent TapEvent = EventManager.RegisterRoutedEvent("Tap", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(WKChip));
+        public event RoutedEventHandler Tap
+        {
+            add { AddHandler(TapEvent, value); }
+            remove { RemoveHandler(TapEvent, value); }
+        }
+        void RaiseTapEvent()
+        {
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(WKChip.TapEvent);
+            RaiseEvent(newEventArgs);
+        }
+        //protected override void OnClick()
+        //{
+        //    RaiseTapEvent();
+        //}
     }
 }
