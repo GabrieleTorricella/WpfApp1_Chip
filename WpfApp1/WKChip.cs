@@ -44,20 +44,58 @@ namespace WpfApp1
     ///     <MyNamespace:WKChip/>
     ///
     /// </summary>
-    public class WKChip : Control
+    public class WKChip : ContentControl
     {
         private bool? _isEditable = false;
-        private TextBox _mailUserEditable = new TextBox();
-        private TextBlock _infoUser = new TextBlock();
+        private TextBox _mailUserEditable;
+        private ContentPresenter _infoUser = new ContentPresenter();
         public static readonly DependencyProperty IsEditableProperty;
         private Button delete = new Button();
         public static readonly RoutedEvent DeleteChipEvent = EventManager.RegisterRoutedEvent("DeleteChip", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(WKChip));
         public static readonly DependencyProperty InfoUserChangedProperty;
+        private string _propertyName;
 
-        public string InfoUser
+        //public string InfoUser
+        //{
+        //    get => (string)base.GetValue(InfoUserChangedProperty);
+        //    set { if (value == null) { base.ClearValue(InfoUserChangedProperty); return; }base.SetValue(InfoUserChangedProperty, value); }
+        //}
+
+
+
+        public string PropertyName
         {
-            get => (string)base.GetValue(InfoUserChangedProperty);
-            set { if (value == null) { base.ClearValue(InfoUserChangedProperty); return; }base.SetValue(InfoUserChangedProperty, value); }
+            get { return (string)GetValue(PropertyNameProperty); }
+            set { SetValue(PropertyNameProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for PropertyName.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty PropertyNameProperty =
+            DependencyProperty.Register("PropertyName", typeof(string), typeof(WKChip), new PropertyMetadata(default(string),new PropertyChangedCallback(WKChip.PropertyNameCallback)));
+
+        private static void PropertyNameCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var item = d as WKChip;
+            if (item != null)
+            {
+                Binding myBinding = new Binding(e.NewValue as string);
+             
+              
+                myBinding.Mode = BindingMode.TwoWay;
+                myBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                item._mailUserEditable.SetBinding(TextBlock.TextProperty,myBinding);
+              
+            }
+        }
+
+        private static void DataTemplateChipPropertyCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var item = d as WKChip;
+            if (item!=null)
+            {
+                item.ContentTemplate = e.NewValue as DataTemplate;
+            }
+            
         }
 
         public bool? IsEditable
@@ -84,23 +122,10 @@ namespace WpfApp1
                     typeof(bool?),
                     typeof(WKChip),
                     new FrameworkPropertyMetadata(null, new PropertyChangedCallback(WKChip.OnIsEditableChanged)));
-            WKChip.InfoUserChangedProperty =
-                DependencyProperty.Register(
-                    "InfoUserChanged",
-                    typeof(string),
-                    typeof(WKChip),
-                    new FrameworkPropertyMetadata(null, new PropertyChangedCallback(WKChip.OnInfoUserChanged)));
+            
         }
 
-        private static void OnInfoUserChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if(d is WKChip infoUser)
-            {
-                var newInfo = e.NewValue != null ? e.NewValue as string : string.Empty;
-                if (infoUser._infoUser !=null)
-                    infoUser._infoUser.Text = newInfo;
-            }
-        }
+     
 
         private static void OnIsEditableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -118,13 +143,15 @@ namespace WpfApp1
         {
             base.OnApplyTemplate();
             _mailUserEditable = (TextBox)GetTemplateChild("MailUserEdit");
-            _infoUser = (TextBlock)GetTemplateChild("InformationUser");
-            _mailUserEditable.Visibility = (bool)!_isEditable ? Visibility.Hidden : Visibility.Visible;
-            _infoUser.Visibility = (bool)_isEditable ? Visibility.Collapsed : Visibility.Visible;
+            _infoUser = (ContentPresenter)GetTemplateChild("InformationUser");
+            //_mailUserEditable.Visibility = (bool)!_isEditable ? Visibility.Hidden : Visibility.Visible;
+            //_infoUser.Visibility = (bool)_isEditable ? Visibility.Collapsed : Visibility.Visible;
             delete = (Button)GetTemplateChild("Delete");
             //delete.Click += new RoutedEventHandler(delete_Click);
+
             delete.Click += Delete_Click;
-            _infoUser.Text = InfoUser ?? String.Empty;
+           // _mailUserEditable.SetBinding(TextBlock.TextProperty, new Binding(PropertyName));
+
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)

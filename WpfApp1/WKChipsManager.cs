@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 
 namespace WpfApp1
@@ -40,6 +42,7 @@ namespace WpfApp1
         public static readonly DependencyProperty ElementiDaVisualizzareProperty;
         public static readonly DependencyProperty SearchPropertiesProperty;
         public static readonly DependencyProperty GroupNameProperty;
+        public static readonly DependencyProperty ChipEditorTemplateProperty;
         private string _viewElement = default(string);
         public string TextValue { get; private set; }
         private ICollectionView collectionView;
@@ -48,6 +51,8 @@ namespace WpfApp1
         public event PropertyChangedEventHandler PropertyChanged;
         private ListBox _listTo = new ListBox();
         private List<WKChip> lstChip;
+        private Popup pupListBox;
+
 
         public string FilterString
         {
@@ -64,12 +69,29 @@ namespace WpfApp1
             get => (IEnumerable<string>)base.GetValue(WKChipsManager.SearchPropertiesProperty);
             set { if (value == null) { base.ClearValue(WKChipsManager.SearchPropertiesProperty); return; } base.SetValue(WKChipsManager.SearchPropertiesProperty, value); }
         }
-        public string GroupNameProp
+        public IEnumerable<string> GroupNameProp
         {
-            get => (string)base.GetValue(WKChipsManager.GroupNameProperty);
+            get => (IEnumerable<string>)base.GetValue(WKChipsManager.GroupNameProperty);
             set { if (value == null) { base.ClearValue(WKChipsManager.GroupNameProperty); return; } base.SetValue(WKChipsManager.GroupNameProperty, value); }
         }
 
+
+
+        public IList SelectedItems
+        {
+            get { return (IList)GetValue(SelectedItemsProperty); }
+            set { SetValue(SelectedItemsProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for SelectedItems.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SelectedItemsProperty =
+            DependencyProperty.Register("SelectedItems", typeof(IEnumerable), typeof(WKChipsManager), new PropertyMetadata());
+
+
+        public WKChipsManager()
+        {
+            SelectedItems = new ObservableCollection<object>();
+        }
         static WKChipsManager()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(WKChipsManager), new FrameworkPropertyMetadata(typeof(WKChipsManager)));
@@ -96,11 +118,54 @@ namespace WpfApp1
 
             WKChipsManager.GroupNameProperty =
                DependencyProperty.Register(
-                   "GroupName",
-                   typeof(string),
+                   "GroupNames",
+                   typeof(IEnumerable<string>),
                    typeof(WKChipsManager),
                    new FrameworkPropertyMetadata(null, new PropertyChangedCallback(WKChipsManager.GroupNameCallBack)));
+            WKChipsManager.ChipEditorTemplateProperty =
+              DependencyProperty.Register(
+                  "ChipEditorTemplate",
+                  typeof(DataTemplate),
+                  typeof(WKChipsManager),
+                  new FrameworkPropertyMetadata(null, new PropertyChangedCallback(WKChipsManager.ChipEdiotrTemplateCallBack)));
+
         }
+
+        private static void ChipEdiotrTemplateCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = d as WKChipsManager;
+            sender.SetChipEditorTemplate();
+        }
+
+        private void SetChipEditorTemplate()
+        {
+            if (this._chipsItem != null)
+                this._chipsItem.ItemTemplate = ChipEditorTemplate;
+        }
+
+        public DataTemplate ChipEditorTemplate
+        {
+            get { return (DataTemplate)GetValue(WKChipsManager.ChipEditorTemplateProperty); }
+            set { SetValue(ChipEditorTemplateProperty, value); }
+        }
+
+        //// Using a DependencyProperty as the backing store for ChipEditorTemplate.  This enables animation, styling, binding, etc...
+        //public static readonly DependencyProperty ChipEditorTemplateProperty =
+        //    DependencyProperty.Register("ChipEditorTemplate", typeof(DataTemplate), typeof(WKChipsManager), new PropertyMetadata(default(DataTemplate)));
+
+
+
+        public DataTemplate DataTemplateItemsListbox
+        {
+            get { return (DataTemplate)GetValue(DataTemplateItemsListboxProperty); }
+            set { SetValue(DataTemplateItemsListboxProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for DataTemplateItemsListbox.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DataTemplateItemsListboxProperty =
+            DependencyProperty.Register("DataTemplateItemsListbox", typeof(DataTemplate), typeof(WKChipsManager), new PropertyMetadata(default(DataTemplate)));
+
+
 
         private bool CustomerFilter(object item)
         {
@@ -118,6 +183,10 @@ namespace WpfApp1
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+        private void DeleteChip_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("It is the custom routed event of your custom control");
         }
 
         /// <summary>
@@ -218,41 +287,69 @@ namespace WpfApp1
             _listTo = (ListBox)GetTemplateChild("ListTo");
             collectionView = CollectionViewSource.GetDefaultView(ItemsSource);
             collectionView.Filter = CustomerFilter;
-            if (!string.IsNullOrEmpty(GroupNameProp))
+            if (GroupNameProp!=null && GroupNameProp.Count()>0)
             {
-                collectionView.GroupDescriptions.Add(new PropertyGroupDescription(GroupNameProp));
+                GroupNameProp.ToList().ForEach( 
+                    x=> 
+                        collectionView.GroupDescriptions.Add(new PropertyGroupDescription(x)));
             }
+            pupListBox = (Popup)GetTemplateChild("pupListBox");
             listBox.ItemsSource = collectionView;
             listBox.DisplayMemberPath = _viewElement;
             listBox.SelectionChanged += ListBoxItems_SelectionChanged;
             _searchBox = (TextBox)GetTemplateChild("SearchBox");
             _searchBox.TextChanged += _searchBox_TextChanged;
+            pupListBox.Loaded += PupListBox_Loaded;
             _searchBox.Focus();
-            lstChip = new List<WKChip>();
+            //this._chipsItem = (ItemsControl)GetTemplateChild("ChipsItems");
+            //    //var el = this._chipsItem.ItemTemplate;
+            //this._chipsItem.ItemTemplate = ChipEditorTemplate;
+            EventManager.RegisterClassHandler(typeof(WKChip),
+                                                WKChip.DeleteChipEvent,
+                                                new RoutedEventHandler(ChipItem_DeleteChip), true);
+        
+        }
+
+        private void PupListBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            Window w = Window.GetWindow(_searchBox);
+            if (null != w)
+            {
+                w.LocationChanged += delegate (object senderw, EventArgs argsw)
+                {
+                    var offset = pupListBox.HorizontalOffset;
+                    pupListBox.HorizontalOffset = offset + 1;
+                    pupListBox.HorizontalOffset = offset;
+                };
+            }
         }
 
         private void ListBoxItems_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var chipItem = new WKChip();
-            //TODO CHANGE FOR MANAGE GENERIC TYPES
-            var user = listBox.SelectedItem as User;
-            if (user != null)
-            {
-                chipItem.InfoUser = user.Name;
-                _listTo.Items.Add(chipItem);
-                chipItem.DeleteChip += ChipItem_DeleteChip;
-                //_listTo.Items.Add();
-                _searchBox.Text = default(string);
-            }
-            e.Handled = true;
-            //listBox.SelectedIndex = -1;
-            Console.WriteLine("Selected index changed");
+            SelectedItems.Add(listBox.SelectedItem);
+            //var chipItem = new WKChip();
+            ////TODO CHANGE FOR MANAGE GENERIC TYPES
+            //var user = listBox.SelectedItem as User;
+            //if (user != null)
+            //{
+            //    chipItem.InfoUser = user.Name;
+            //    _listTo.Items.Add(chipItem);
+            //    chipItem.DeleteChip += ChipItem_DeleteChip;
+            //    //_listTo.Items.Add();
+            //    _searchBox.Text = default(string);
+            //}
+            //e.Handled = true;
+            ////listBox.SelectedIndex = -1;
+            //Console.WriteLine("Selected index changed");
         }
 
         private void ChipItem_DeleteChip(object sender, RoutedEventArgs e)
         {
-            lstChip.Remove(sender as WKChip);
-            _listTo.Items.Remove(sender as WKChip);
+            //lstChip.Remove(sender as WKChip);
+            //_listTo.Items.Remove(sender as WKChip);
+            // SelectedItems.Remove();
+            var el = sender as WKChip;
+            SelectedItems.Remove(el.Content);
         }
 
 

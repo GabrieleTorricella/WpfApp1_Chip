@@ -3,6 +3,34 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:WpfApp1">
 
+    <DataTemplate x:Key="TemplateMailToUser">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Label Content="{Binding Name}"
+                   Margin="0 0 0 0"
+                   Grid.Column="0"></Label>
+            <Label Content="{Binding Surname}"
+                   Margin="0 0 0 0"
+                   Grid.Column="1"></Label>
+            <Label Content="&lt;"
+                   Margin="0 0 0 0"
+                   Grid.Column="2" />
+            <Label Content="{Binding Mail}"
+                   Margin="0 0 0 0"
+                   Grid.Column="3" />
+            <Label Content="&gt;"
+                   Margin="0 0 0 0"
+                   Grid.Column="4" />
+        </Grid>
+    </DataTemplate>
+    
     <Style TargetType="{x:Type local:WKChip}">
         <Setter Property="Template">
             <Setter.Value>
@@ -17,10 +45,21 @@
                                 <DockPanel HorizontalAlignment="Left" Margin="-1" VerticalAlignment="Top" Height="30" MinWidth="150" Background="Transparent" Width="Auto" >
                                     <Ellipse x:Name="PhotoUser" Fill="#FFF4F4F5" HorizontalAlignment="Left" 
                                              Height="30" Margin="0,0,0,0" Stroke="Black" VerticalAlignment="Top" MinWidth="30"/>
-                                    <TextBlock x:Name="InformationUser" Margin="5,5,5,5" MinWidth="150" Background="Transparent" 
-                                               TextTrimming="WordEllipsis" Text="{Binding Path=User.Name}" >
-                                        <TextBox x:Name="MailUserEdit" Height="10" TextWrapping="Wrap" MinWidth="60" Margin="150,5,10,5"/>
-                                    </TextBlock>
+
+
+                                    <ContentPresenter x:Name="InformationUser" Content="{TemplateBinding Content}"
+                                                      ContentTemplate="{TemplateBinding ContentTemplate}" />
+                                    <Label Content="&lt;"></Label>
+
+                                    <TextBox x:Name="MailUserEdit"
+                                            
+                                             TextWrapping="Wrap"
+                                             
+                                            MinWidth="150"
+                                           
+                                            
+                                             />
+                                    <Label Content="&gt;"></Label>
                                     <Button x:Name="Delete" Content="X" MinWidth="10" Margin="0,5,5,5" Width="20"/>
                                 </DockPanel>
                             </Border>
@@ -38,8 +77,40 @@
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
-                        <StackPanel Orientation="Vertical">
-                            <ItemsControl x:Name="ChipsItems">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup Name="ValueStates">
+
+                                <!--Make the Value property red when it is negative.-->
+                                <VisualState Name="PopupOpenOnTextEdit">
+                                    <Storyboard>
+                                        <ColorAnimation To="Red"
+                                                        Storyboard.TargetName="TextBlock"
+                                                        Storyboard.TargetProperty="(Foreground).(Color)" />
+                                    </Storyboard>
+
+                                </VisualState>
+
+                                <VisualState Name="PopupOpenOnFocus" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <WrapPanel Orientation="Vertical">
+                            <ItemsControl x:Name="ChipsItems" ItemsSource="{TemplateBinding SelectedItems}">
+                                <ItemsControl.ItemTemplate>
+                                    
+                                    <DataTemplate>
+                                        <!--<local:WKChip Content="{Binding}">
+                                            --><!--<local:WKChip.ContentTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Name}"></TextBlock>
+                                                </DataTemplate>
+                                            </local:WKChip.ContentTemplate>--><!--
+                                        </local:WKChip>-->
+                                        <local:WKChip Content="{Binding}"
+                                                      
+                                                      ContentTemplate="{Binding ChipEditorTemplate,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
+                                                      PropertyName="{Binding ElementiDaVisualizzare ,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"></local:WKChip>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel Orientation="Horizontal"
@@ -59,14 +130,15 @@
                                 <TextBox x:Name="SearchBox" MinWidth="50">
                                 </TextBox>
                             </StackPanel>
-                            <Popup x:Name="pupSelectionDate"
+                            <Popup x:Name="pupListBox"
                                    PlacementTarget="{Binding ElementName=SearchBox}"
                                    IsOpen="{Binding IsFocused, ElementName=SearchBox, Mode=OneWay}"
                                    StaysOpen="True"
-                                   HorizontalAlignment="Center">
-   
+                                   HorizontalAlignment="Center" HorizontalOffset="0" VerticalOffset="0">
+                               
                                 <Border >
-                                    <ListBox  x:Name="ListItems">
+                                    <ListBox  x:Name="ListItems"
+                                              ItemTemplate="{TemplateBinding DataTemplateItemsListbox}">
                                         <ListBox.GroupStyle>
                                             <GroupStyle>
                                                 <GroupStyle.HeaderTemplate>
@@ -76,6 +148,7 @@
                                                 </GroupStyle.HeaderTemplate>
                                             </GroupStyle>
                                         </ListBox.GroupStyle>
+                                        
                                     </ListBox>
                                 </Border>
                             </Popup>
@@ -83,7 +156,7 @@
                             
                             
                             
-                        </StackPanel>
+                        </WrapPanel>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

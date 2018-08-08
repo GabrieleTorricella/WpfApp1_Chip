@@ -6,6 +6,10 @@
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        
+
+    </Window.Resources>
     <Grid>
         <!--<Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -18,7 +22,9 @@
         <ListBox x:Name="lstChips" Grid.Column="1">
             
         </ListBox>-->
-        <local:WKChipsManager x:Name="Chip" GroupNameProp="GroupName"/>
+        <local:WKRecipientSelector>
+            
+        </local:WKRecipientSelector>
         <!--<ListBox Name="lstItem" HorizontalAlignment="Left" Margin="39,51,0,0" VerticalAlignment="Top"
                  Height="158" Width="379" >
             <TextBox Name="a" Height="55" TextWrapping="Wrap" Text="" Width="195" GotFocus="a_GotFocus"/>
