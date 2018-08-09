@@ -1,7 +1,7 @@
-<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:WpfApp1">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:WpfApp1"
+                    xmlns:System="clr-namespace:System;assembly=mscorlib">
 
     <DataTemplate x:Key="TemplateMailToUser">
         <Grid>
@@ -30,37 +30,61 @@
                    Grid.Column="4" />
         </Grid>
     </DataTemplate>
-    
+    <local:MultiBooleanToVisibilityConverter x:Key="converter" />
+
     <Style TargetType="{x:Type local:WKChip}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:WKChip}">
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}" >
-                        <Grid HorizontalAlignment="Left" Height="30" Margin="0,0,0,0" VerticalAlignment="Top" MinWidth="150">
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid HorizontalAlignment="Left"
+                              Height="30"
+                              Margin="0,0,0,0"
+                              VerticalAlignment="Top"
+                              MinWidth="150">
                             <!--<Ellipse Fill="Transparent" Height="100" Margin="0,0,280,0" Stroke="Black" VerticalAlignment="Top"/>-->
                             <!--<Ellipse Fill="Transparent" HorizontalAlignment="Left" Height="100" Margin="280,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="100"/>-->
-                            <Border CornerRadius="13" BorderBrush="Gray" BorderThickness="1" DockPanel.Dock="Top" Width="Auto">
-                                <DockPanel HorizontalAlignment="Left" Margin="-1" VerticalAlignment="Top" Height="30" MinWidth="150" Background="Transparent" Width="Auto" >
-                                    <Ellipse x:Name="PhotoUser" Fill="#FFF4F4F5" HorizontalAlignment="Left" 
-                                             Height="30" Margin="0,0,0,0" Stroke="Black" VerticalAlignment="Top" MinWidth="30"/>
+                            <Border CornerRadius="13"
+                                    BorderBrush="Gray"
+                                    BorderThickness="1"
+                                    DockPanel.Dock="Top"
+                                    Width="Auto">
+                                <DockPanel HorizontalAlignment="Left"
+                                           Margin="-1"
+                                           VerticalAlignment="Top"
+                                           Height="30"
+                                           MinWidth="150"
+                                           Background="Transparent"
+                                           Width="Auto">
+                                    <Ellipse x:Name="PhotoUser"
+                                             Fill="#FFF4F4F5"
+                                             HorizontalAlignment="Left"
+                                             Height="30"
+                                             Margin="0,0,0,0"
+                                             Stroke="Black"
+                                             VerticalAlignment="Top"
+                                             MinWidth="30" />
 
 
-                                    <ContentPresenter x:Name="InformationUser" Content="{TemplateBinding Content}"
+                                    <ContentPresenter x:Name="InformationUser"
+                                                      Content="{TemplateBinding Content}"
                                                       ContentTemplate="{TemplateBinding ContentTemplate}" />
                                     <Label Content="&lt;"></Label>
 
                                     <TextBox x:Name="MailUserEdit"
-                                            
                                              TextWrapping="Wrap"
-                                             
-                                            MinWidth="150"
-                                           
-                                            
+                                             MinWidth="150"
+                                             IsEnabled="{TemplateBinding IsEditable}"
+                                            Text="{Binding Mail}"
                                              />
                                     <Label Content="&gt;"></Label>
-                                    <Button x:Name="Delete" Content="X" MinWidth="10" Margin="0,5,5,5" Width="20"/>
+                                    <Button x:Name="Delete"
+                                            Content="X"
+                                            MinWidth="10"
+                                            Margin="0,5,5,5"
+                                            Width="20" />
                                 </DockPanel>
                             </Border>
                         </Grid>
@@ -83,30 +107,56 @@
                                 <!--Make the Value property red when it is negative.-->
                                 <VisualState Name="PopupOpenOnTextEdit">
                                     <Storyboard>
-                                        <ColorAnimation To="Red"
-                                                        Storyboard.TargetName="TextBlock"
-                                                        Storyboard.TargetProperty="(Foreground).(Color)" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="pupListBox"
+                                                                       Storyboard.TargetProperty="IsOpen"
+                                                                       Duration="0">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <System:Boolean>True</System:Boolean>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+
                                     </Storyboard>
 
                                 </VisualState>
 
-                                <VisualState Name="PopupOpenOnFocus" />
+                                <VisualState Name="PopupOpenOnFocus">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="pupListBox"
+                                                                       Storyboard.TargetProperty="IsOpen"
+                                                                       Duration="0">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <System:Boolean>False</System:Boolean>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+
+
+                                    </Storyboard>
+                                </VisualState>
+
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <WrapPanel Orientation="Vertical">
-                            <ItemsControl x:Name="ChipsItems" ItemsSource="{TemplateBinding SelectedItems}">
+                        <WrapPanel Orientation="Vertical"
+                                   MinHeight="24"
+                                  >
+                            <ItemsControl x:Name="ChipsItems"
+                                          ItemsSource="{TemplateBinding SelectedItems}">
                                 <ItemsControl.ItemTemplate>
-                                    
+
                                     <DataTemplate>
                                         <!--<local:WKChip Content="{Binding}">
-                                            --><!--<local:WKChip.ContentTemplate>
+                                            -->
+                                        <!--<local:WKChip.ContentTemplate>
                                                 <DataTemplate>
                                                     <TextBlock Text="{Binding Name}"></TextBlock>
                                                 </DataTemplate>
-                                            </local:WKChip.ContentTemplate>--><!--
+                                            </local:WKChip.ContentTemplate>-->
+                                        <!--
                                         </local:WKChip>-->
                                         <local:WKChip Content="{Binding}"
-                                                      
                                                       ContentTemplate="{Binding ChipEditorTemplate,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
                                                       PropertyName="{Binding ElementiDaVisualizzare ,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"></local:WKChip>
                                     </DataTemplate>
@@ -119,43 +169,75 @@
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                             </ItemsControl>
-                            <WrapPanel Orientation="Horizontal" ScrollViewer.CanContentScroll="False">
-                                <ListBox x:Name="ListTo" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <WrapPanel Orientation="Horizontal"
+                                       ScrollViewer.CanContentScroll="False">
+                                <ListBox x:Name="ListTo"
+                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                     <ListBox.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <WrapPanel Orientation="Horizontal"/>
+                                            <WrapPanel Orientation="Horizontal"
+                                                       MaxWidth="800"
+                                                       
+                                                       ScrollViewer.VerticalScrollBarVisibility="Auto" />
                                         </ItemsPanelTemplate>
                                     </ListBox.ItemsPanel>
                                 </ListBox>
-                                <TextBox x:Name="SearchBox" MinWidth="100">
+                                <TextBox x:Name="SearchBox"
+                                         MinWidth="100">
                                 </TextBox>
                             </WrapPanel>
                             <Popup x:Name="pupListBox"
                                    PlacementTarget="{Binding ElementName=SearchBox}"
-                                   IsOpen="{Binding IsFocused, ElementName=SearchBox, Mode=OneWay}"
                                    StaysOpen="True"
-                                   HorizontalAlignment="Center" HorizontalOffset="0" VerticalOffset="0">
-                               
-                                <Border >
+                                   HorizontalAlignment="Center"
+                                   HorizontalOffset="0"
+                                   VerticalOffset="0"
+                                   Width="Auto"
+                                   MinWidth="450"
+                                   MaxHeight="250"
+                                   IsOpen="False"
+                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                   ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                                <!--<Popup.Visibility>
+                                    <MultiBinding Converter="{StaticResource converter}"
+                                                  ConverterParameter="FormatLastFirst">
+                                        <Binding Path="IsFocused"
+                                                 ElementName="SearchBox"
+                                                 Mode="OneWay" />
+                                        <Binding Path="ShowPopupOnFocus"
+                                                 RelativeSource="{RelativeSource AncestorType=local:WKChipsManager}" />
+                                    </MultiBinding>
+                                </Popup.Visibility>-->
+
+                                <Border Visibility="{Binding Path=IsVisible, ElementName=pupListBox, Mode=OneWay}"
+                                        Background="#FFFFFF"
+                                        BorderBrush="#B9B9B9">
                                     <ListBox  x:Name="ListItems"
-                                              ItemTemplate="{TemplateBinding DataTemplateItemsListbox}">
+                                              ItemTemplate="{TemplateBinding DataTemplateItemsListbox}"
+                                              Visibility="{Binding Path=IsVisible, ElementName=pupListBox, Mode=OneWay}">
                                         <ListBox.GroupStyle>
                                             <GroupStyle>
                                                 <GroupStyle.HeaderTemplate>
                                                     <DataTemplate>
-                                                        <TextBlock Text="{Binding Path=Name}" />
+                                                        <TextBlock Foreground="#000000"
+                                                                   Background="#EFEFEF"
+                                                                   FontSize="12px"
+                                                                   Margin="5px"
+                                                                   Text="{Binding Path=Name}" />
                                                     </DataTemplate>
                                                 </GroupStyle.HeaderTemplate>
                                             </GroupStyle>
                                         </ListBox.GroupStyle>
-                                        
+
+
                                     </ListBox>
                                 </Border>
                             </Popup>
-                        
-                            
-                            
-                            
+
+
+
+
                         </WrapPanel>
                     </Border>
                 </ControlTemplate>

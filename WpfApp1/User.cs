@@ -43,5 +43,6 @@ namespace WpfApp1
         {
             GroupNameCategory = category;
         }
+        public UserCase() { }
     }
 }

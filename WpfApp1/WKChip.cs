@@ -52,15 +52,8 @@ namespace WpfApp1
         public static readonly DependencyProperty IsEditableProperty;
         private Button delete = new Button();
         public static readonly RoutedEvent DeleteChipEvent = EventManager.RegisterRoutedEvent("DeleteChip", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(WKChip));
+        public static readonly RoutedEvent AddChipEvent = EventManager.RegisterRoutedEvent("AddChip", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(WKChip));
         public static readonly DependencyProperty InfoUserChangedProperty;
-        private string _propertyName;
-
-        //public string InfoUser
-        //{
-        //    get => (string)base.GetValue(InfoUserChangedProperty);
-        //    set { if (value == null) { base.ClearValue(InfoUserChangedProperty); return; }base.SetValue(InfoUserChangedProperty, value); }
-        //}
-
 
 
         public string PropertyName
@@ -78,14 +71,19 @@ namespace WpfApp1
             var item = d as WKChip;
             if (item != null)
             {
-                Binding myBinding = new Binding(e.NewValue as string);
-             
-              
-                myBinding.Mode = BindingMode.TwoWay;
-                myBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                item._mailUserEditable.SetBinding(TextBlock.TextProperty,myBinding);
+                item.SetBinding();
+               
               
             }
+        }
+        private void SetBinding()
+        {
+            Binding myBinding = new Binding(PropertyName);
+
+
+            myBinding.Mode = BindingMode.TwoWay;
+            myBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            this._mailUserEditable.SetBinding(TextBlock.TextProperty, myBinding);
         }
 
         private static void DataTemplateChipPropertyCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -133,9 +131,9 @@ namespace WpfApp1
             {
                 var result = e.NewValue != null ? e.NewValue as bool? : false;
                 if (item._mailUserEditable == null)
-                    item._isEditable = result;
+                    item.IsEditable= result;
                 else
-                    item._isEditable = result;
+                    item.IsEditable = result;
             }
         }
 
@@ -150,8 +148,25 @@ namespace WpfApp1
             //delete.Click += new RoutedEventHandler(delete_Click);
 
             delete.Click += Delete_Click;
-           // _mailUserEditable.SetBinding(TextBlock.TextProperty, new Binding(PropertyName));
+            this.Loaded += Loaded_Event;        
+           //_mailUserEditable.SetBinding(TextBlock.TextProperty, new Binding("Mail"));
 
+        }
+
+        private void Loaded_Event(object sender, RoutedEventArgs e)
+        {
+            RaiseAddChipEvent();
+        }
+
+        public event RoutedEventHandler AddChip
+        {
+            add { AddHandler(DeleteChipEvent, value); }
+            remove { RemoveHandler(DeleteChipEvent, value); }
+        }
+        void RaiseAddChipEvent()
+        {
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(WKChip.AddChipEvent);
+            RaiseEvent(newEventArgs);
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)

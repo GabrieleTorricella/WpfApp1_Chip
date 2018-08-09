@@ -51,7 +51,7 @@ namespace WpfApp1
             };
             Chip.ItemsSource = caseUsers;
 
-            Chip.ElementiDaVisualizzare = "Name";
+            Chip.ElementiDaVisualizzare = "Mail";
             Chip.SearchProperties = new List<string>() { "Name", "Surname", "Mail" };
             Chip.GroupNameProp = new List<string>()
             {

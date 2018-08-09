@@ -15,6 +15,11 @@ namespace WpfApp1
     /// <summary>
     /// Chip selector
     /// </summary>
+    ///
+    [TemplatePart(Name = "pupListBox", Type = typeof(Popup))]
+    [TemplatePart(Name = "_searchBox", Type = typeof(TextBox))]
+    [TemplateVisualState(Name = "PopupOpenOnTextEdit", GroupName = "ValueStates")]
+    [TemplateVisualState(Name = "PopupOpenOnFocus", GroupName = "ValueStates")]
     public class WKChipsManager : Control, INotifyPropertyChanged
     {
         public static readonly RoutedEvent TextChangedEvent = EventManager.RegisterRoutedEvent("TextChanged", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(WKChipsManager));
@@ -52,6 +57,7 @@ namespace WpfApp1
         private ListBox _listTo = new ListBox();
         private List<WKChip> lstChip;
         private Popup pupListBox;
+        private bool isFocusedSearchBox;
 
 
         public string FilterString
@@ -74,6 +80,18 @@ namespace WpfApp1
             get => (IEnumerable<string>)base.GetValue(WKChipsManager.GroupNameProperty);
             set { if (value == null) { base.ClearValue(WKChipsManager.GroupNameProperty); return; } base.SetValue(WKChipsManager.GroupNameProperty, value); }
         }
+
+
+
+        public bool ShowPopupOnFocus
+        {
+            get { return (bool)GetValue(ShowPopupOnFocusProperty); }
+            set { SetValue(ShowPopupOnFocusProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for ShowPopupOnFocus.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ShowPopupOnFocusProperty =
+            DependencyProperty.Register("ShowPopupOnFocus", typeof(bool), typeof(WKChipsManager), new PropertyMetadata(default(bool)));
 
 
 
@@ -299,15 +317,38 @@ namespace WpfApp1
             listBox.SelectionChanged += ListBoxItems_SelectionChanged;
             _searchBox = (TextBox)GetTemplateChild("SearchBox");
             _searchBox.TextChanged += _searchBox_TextChanged;
+            _searchBox.GotFocus += _searchBox_GotFocus;
+            _searchBox.LostFocus += _searchBox_LostFocus;
             pupListBox.Loaded += PupListBox_Loaded;
-            _searchBox.Focus();
+           // _searchBox.Focus();
             //this._chipsItem = (ItemsControl)GetTemplateChild("ChipsItems");
             //    //var el = this._chipsItem.ItemTemplate;
             //this._chipsItem.ItemTemplate = ChipEditorTemplate;
             EventManager.RegisterClassHandler(typeof(WKChip),
                                                 WKChip.DeleteChipEvent,
                                                 new RoutedEventHandler(ChipItem_DeleteChip), true);
+            EventManager.RegisterClassHandler(typeof(WKChip),
+                                               WKChip.AddChipEvent,
+                                               new RoutedEventHandler(ChipItem_AddChip), true);
+            UpdateStates(false);
         
+        }
+
+        private void ChipItem_AddChip(object sender, RoutedEventArgs e)
+        {
+            var item = sender as WKChip;
+            item.IsEditable = true;
+            
+        }
+
+        private void _searchBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            UpdateStates(true);
+        }
+
+        private void _searchBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            UpdateStates(true);
         }
 
         private void PupListBox_Loaded(object sender, RoutedEventArgs e)
@@ -326,7 +367,19 @@ namespace WpfApp1
 
         private void ListBoxItems_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SelectedItems.Add(listBox.SelectedItem);
+            if (listBox.SelectedIndex != -1)
+            {
+                SelectedItems.Add(listBox.SelectedItem);
+                _searchBox.Text = null;
+            }
+           
+            
+            
+
+
+   
+         
+         
             //var chipItem = new WKChip();
             ////TODO CHANGE FOR MANAGE GENERIC TYPES
             //var user = listBox.SelectedItem as User;
@@ -352,20 +405,64 @@ namespace WpfApp1
             SelectedItems.Remove(el.Content);
         }
 
+        private void UpdateStates(bool useTransitions)
+        {
+            if (_searchBox.IsFocused)
+            {
+                if (ShowPopupOnFocus || !(string.IsNullOrEmpty(_searchBox.Text)))
+                {
+                    VisualStateManager.GoToState(this, "PopupOpenOnTextEdit", useTransitions);
+                    Console.WriteLine("show");
+                }
+                else
+                {
+                    VisualStateManager.GoToState(this, "PopupOpenOnFocus", useTransitions);
+                    Console.WriteLine("hide");
+                }
+            }
+            else
+            {
+                VisualStateManager.GoToState(this, "PopupOpenOnFocus", useTransitions);
+                Console.WriteLine("hide");
+            }
+
+        }
 
 
         private void _searchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            //List<IGroup> result = new List<IGroup>();
-            //result.AddRange(ItemsSource.Where(x => x.GroupName.Contains(_searchBox.Text)));
-            ////var res = ItemsSource.Except(result).Where(x=>x.Items.GetType();
-            ////var res2 = res.ToList().ForEach(x=> x.)
-            ////result.AddRange(ItemsSource.Where(x => !x.GroupName.Contains(_searchBox.Text)));
-            //treeView.ItemsSource = result;
-            //treeView.UpdateLayout();
+            if (!string.IsNullOrEmpty(_searchBox.Text) && _searchBox.Text.Last().Equals(';'))
+            {
+                Type t = ItemsSource.GetType().GetGenericArguments()[0];
+                var el = Activator.CreateInstance(t);
+                el.GetType().GetProperty(ElementiDaVisualizzare).SetValue(el, _searchBox.Text.Substring(0,_searchBox.Text.Count()-1));
+                SelectedItems.Add(el);
+                _searchBox.Text = string.Empty;
+            }
             FilterString = _searchBox.Text;
-            //TextValue = _searchBox.Text;
-            //RaiseTextChangedEvent(); 
+            UpdateStates(true);
+        }
+    }
+    public class MultiBooleanToVisibilityConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values,
+                                Type targetType,
+                                object parameter,
+                                System.Globalization.CultureInfo culture)
+        {
+            bool visible = true;
+            foreach (object value in values)
+                if (value is bool)
+                    visible = visible && (bool)value;
+            return visible;
+        }
+
+        public object[] ConvertBack(object value,
+                                    Type[] targetTypes,
+                                    object parameter,
+                                    System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }
