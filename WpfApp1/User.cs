@@ -38,6 +38,7 @@ namespace WpfApp1
     public class UserCase : User
     {
         public string GroupNameCategory { get; set; }
+        public byte[] Image { get; set; }
 
         public UserCase(string name, string surname, string mail, string groupName, string category) : base(name, surname, mail,groupName)
         {

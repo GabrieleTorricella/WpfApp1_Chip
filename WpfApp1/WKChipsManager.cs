@@ -58,6 +58,21 @@ namespace WpfApp1
         private List<WKChip> lstChip;
         private Popup pupListBox;
         private bool isFocusedSearchBox;
+        private IList SelectedItemsEditable;
+
+
+
+
+        public string ImageName
+        {
+            get { return (string)GetValue(ImageNameProperty); }
+            set { SetValue(ImageNameProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for ImageName.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ImageNameProperty =
+            DependencyProperty.Register("ImageNameChip", typeof(string), typeof(WKChipsManager), new PropertyMetadata(default(string)));
+
 
 
         public string FilterString
@@ -109,6 +124,7 @@ namespace WpfApp1
         public WKChipsManager()
         {
             SelectedItems = new ObservableCollection<object>();
+            SelectedItemsEditable = new ObservableCollection<object>();
         }
         static WKChipsManager()
         {
@@ -328,7 +344,7 @@ namespace WpfApp1
                                                 WKChip.DeleteChipEvent,
                                                 new RoutedEventHandler(ChipItem_DeleteChip), true);
             EventManager.RegisterClassHandler(typeof(WKChip),
-                                               WKChip.AddChipEvent,
+                                               WKChip.CreatedChipEvent,
                                                new RoutedEventHandler(ChipItem_AddChip), true);
             UpdateStates(false);
         
@@ -337,7 +353,16 @@ namespace WpfApp1
         private void ChipItem_AddChip(object sender, RoutedEventArgs e)
         {
             var item = sender as WKChip;
-            item.IsEditable = true;
+            if (SelectedItemsEditable.Contains(item.Content))
+            {
+                item.IsEditable = true;
+                item.ShowAddButtonClick = true;
+            }
+            else
+            {
+                item.IsEditable = false;
+            }
+           
             
         }
 
@@ -436,6 +461,7 @@ namespace WpfApp1
                 Type t = ItemsSource.GetType().GetGenericArguments()[0];
                 var el = Activator.CreateInstance(t);
                 el.GetType().GetProperty(ElementiDaVisualizzare).SetValue(el, _searchBox.Text.Substring(0,_searchBox.Text.Count()-1));
+                SelectedItemsEditable.Add(el);
                 SelectedItems.Add(el);
                 _searchBox.Text = string.Empty;
             }

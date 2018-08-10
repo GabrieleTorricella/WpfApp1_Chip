@@ -39,11 +39,67 @@
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CircleImageState" >
+
+                                <VisualState Name="AddButtonState">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnProfilePicture"
+                                                                       Storyboard.TargetProperty="Background"
+                                                                       Duration="0">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <ImageBrush ImageSource="images/blue-plus-icon-6.png" />
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+
+                                    </Storyboard>
+
+                                </VisualState>
+
+                                <VisualState Name="VisualButtonStateWithImage">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnProfilePicture"
+                                                                       Storyboard.TargetProperty="Background"
+                                                                       Duration="0">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <ImageBrush ImageSource="{Binding ImageProperty}" />
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+
+
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState Name="VisualButtonStateWithoutImage">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnProfilePicture"
+                                                                       Storyboard.TargetProperty="Background"
+                                                                       Duration="0">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <ImageBrush ImageSource="Images/person.png" />
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                      
+
+                                    </Storyboard>
+                                </VisualState>
+
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid HorizontalAlignment="Left"
                               Height="30"
                               Margin="0,0,0,0"
                               VerticalAlignment="Top"
+                              Background="#EFF3F5"
+                             
                               MinWidth="150">
+
+                           
                             <!--<Ellipse Fill="Transparent" Height="100" Margin="0,0,280,0" Stroke="Black" VerticalAlignment="Top"/>-->
                             <!--<Ellipse Fill="Transparent" HorizontalAlignment="Left" Height="100" Margin="280,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="100"/>-->
                             <Border CornerRadius="13"
@@ -58,14 +114,28 @@
                                            MinWidth="150"
                                            Background="Transparent"
                                            Width="Auto">
-                                    <Ellipse x:Name="PhotoUser"
-                                             Fill="#FFF4F4F5"
-                                             HorizontalAlignment="Left"
-                                             Height="30"
-                                             Margin="0,0,0,0"
-                                             Stroke="Black"
-                                             VerticalAlignment="Top"
-                                             MinWidth="30" />
+                                    <Button x:Name="BtnProfilePicture"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Top"
+                                            >
+                                        <Button.Template>
+                                            <ControlTemplate>
+                                                <Grid>
+                                                    <Ellipse x:Name="PhotoUser"
+                                                             HorizontalAlignment="Left"
+                                                             Height="30"
+                                                             StrokeThickness="1"
+                                                             Margin="0,0,0,0"
+                                                             Stroke="#B9B9B9"
+                                                             VerticalAlignment="Top"
+                                                             Fill="{TemplateBinding Background}"
+                                                             MinWidth="30" />
+                                                  
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button >
+                                    
 
 
                                     <ContentPresenter x:Name="InformationUser"
@@ -76,6 +146,7 @@
                                     <TextBox x:Name="MailUserEdit"
                                              TextWrapping="Wrap"
                                              MinWidth="150"
+                                             Background="#EFF3F5"
                                              IsEnabled="{TemplateBinding IsEditable}"
                                             Text="{Binding Mail}"
                                              />
@@ -84,7 +155,10 @@
                                             Content="X"
                                             MinWidth="10"
                                             Margin="0,5,5,5"
-                                            Width="20" />
+                                            FontSize="8"
+                                            Width="12px"
+                                            Background="#B9B9B9"
+                                            Height="12px"/>
                                 </DockPanel>
                             </Border>
                         </Grid>

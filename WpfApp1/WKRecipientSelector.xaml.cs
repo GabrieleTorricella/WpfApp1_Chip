@@ -52,12 +52,27 @@ namespace WpfApp1
             Chip.ItemsSource = caseUsers;
 
             Chip.ElementiDaVisualizzare = "Mail";
+            Chip.ImageName = "Image";
             Chip.SearchProperties = new List<string>() { "Name", "Surname", "Mail" };
             Chip.GroupNameProp = new List<string>()
             {
                 "GroupName",
                 "GroupNameCategory"
             };
+        
+        EventManager.RegisterClassHandler(typeof(WKChip),
+                                               WKChip.AddButtonClickChipEvent,
+                                               new RoutedEventHandler(ChipItem_AddChip), true);
+        }
+
+        private void ChipItem_AddChip(object sender, RoutedEventArgs e)
+        {
+            Window w = new Window();
+            w.Width = 300;
+            w.Height = 100;
+
+            w.Content = new TextBlock() { Text = "Nuovo utente" };
+            w.Show();
         }
     }
 }

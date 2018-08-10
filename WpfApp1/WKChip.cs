@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,6 +46,13 @@ namespace WpfApp1
     ///     <MyNamespace:WKChip/>
     ///
     /// </summary>
+    /// 
+  
+    [TemplatePart(Name = "_photoUser", Type = typeof(Ellipse))]
+    [TemplatePart(Name = "BtnProfilePicture", Type = typeof(Button))]
+    [TemplateVisualState(Name = "AddButtonState", GroupName = "CircleImageState")]
+    [TemplateVisualState(Name = "VisualButtonStateWithImage", GroupName = "CircleImageState")]
+    [TemplateVisualState(Name = "VisualButtonStateWithoutImage", GroupName = "CircleImageState")]
     public class WKChip : ContentControl
     {
         private bool? _isEditable = false;
@@ -51,10 +60,55 @@ namespace WpfApp1
         private ContentPresenter _infoUser = new ContentPresenter();
         public static readonly DependencyProperty IsEditableProperty;
         private Button delete = new Button();
+        private Ellipse _photoUser;
         public static readonly RoutedEvent DeleteChipEvent = EventManager.RegisterRoutedEvent("DeleteChip", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(WKChip));
-        public static readonly RoutedEvent AddChipEvent = EventManager.RegisterRoutedEvent("AddChip", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(WKChip));
+        public static readonly RoutedEvent CreatedChipEvent = EventManager.RegisterRoutedEvent("CreatedChip", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(WKChip));
         public static readonly DependencyProperty InfoUserChangedProperty;
+        public static readonly RoutedEvent AddButtonClickChipEvent = EventManager.RegisterRoutedEvent("AddButtonClickChip", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(WKChip));
+        private VisualStateGroup _circleImageState;
+        private Button BtnProfilePicture;
 
+        public string ImageName
+        {
+            get { return (string)GetValue(ImageNameProperty); }
+            set { SetValue(ImageNameProperty, value); }
+        }
+
+
+
+        public bool ShowAddButtonClick
+        {
+            get { return (bool)GetValue(ShowAddButtonClickProperty); }
+            set { SetValue(ShowAddButtonClickProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for ShowAddButtonClick.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ShowAddButtonClickProperty =
+            DependencyProperty.Register("ShowAddButtonClick", typeof(bool), typeof(WKChip), new PropertyMetadata(default(bool), new PropertyChangedCallback(WKChip.ShowAddButtonCallback)));
+
+        private static void ShowAddButtonCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var item = d as WKChip;
+            if (item != null)
+            {
+                item.UpdateState(true);
+            }
+        }
+
+
+
+        // Using a DependencyProperty as the backing store for ImageName.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ImageNameProperty =
+            DependencyProperty.Register("ImageName", typeof(string), typeof(WKChip), new PropertyMetadata(default(string),new PropertyChangedCallback(WKChip.ImageNameCallback)));
+
+        private static void ImageNameCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var item = d as WKChip;
+            if (item != null)
+            {
+                item.UpdateState(true);
+            }
+        }
 
         public string PropertyName
         {
@@ -148,10 +202,76 @@ namespace WpfApp1
             //delete.Click += new RoutedEventHandler(delete_Click);
 
             delete.Click += Delete_Click;
-            this.Loaded += Loaded_Event;        
-           //_mailUserEditable.SetBinding(TextBlock.TextProperty, new Binding("Mail"));
+            this.Loaded += Loaded_Event;
+            //_mailUserEditable.SetBinding(TextBlock.TextProperty, new Binding("Mail"));
+            //_photoUser = (Ellipse)GetTemplateChild("PhotoUser");
+            BtnProfilePicture = (Button)GetTemplateChild("BtnProfilePicture");
+            BtnProfilePicture.Click += AddButton_Click;
+            UpdateState(false);
+            _circleImageState = (VisualStateGroup)GetTemplateChild("CircleImageState");
 
+            LoadImageSource();
         }
+
+       
+        private void LoadImageSource()
+        {
+            if (BtnProfilePicture!=null &&this.ShowAddButtonClick)
+            {
+                var image = new BitmapImage();
+                try
+                {
+                    image.BeginInit();
+                    
+                    {
+                        var bytes = (byte[])new ImageConverter().ConvertTo(Properties.Resources.blue_plus_icon_6, typeof(byte[]));
+                        image.StreamSource = new MemoryStream(bytes);
+                    }
+                    image.CacheOption = BitmapCacheOption.OnLoad;
+                    image.EndInit();
+                    image.Freeze();
+                }
+                catch (FileNotFoundException ex)
+                {
+                    throw ex;
+                }
+
+                BtnProfilePicture.Background = new ImageBrush { ImageSource = image };
+            }
+            else
+            {
+
+                if (!string.IsNullOrEmpty(ImageName) && this.Content.GetType().GetProperty(ImageName, typeof(byte[])).GetValue(this.Content) != null)
+                {
+                    var image = new BitmapImage();
+                    try
+                    {
+                        image.BeginInit();
+
+                        {
+                          
+                            image.StreamSource = new MemoryStream((byte [])this.Content.GetType().GetProperty(ImageName, typeof(byte[])).GetValue(this.Content));
+                        }
+                        image.CacheOption = BitmapCacheOption.OnLoad;
+                        image.EndInit();
+                        image.Freeze();
+                    }
+                    catch (FileNotFoundException ex)
+                    {
+                        throw ex;
+                    }
+
+                    BtnProfilePicture.Background = new ImageBrush { ImageSource = image };
+                }
+                else
+                {
+                    BtnProfilePicture.Background = new SolidColorBrush {};
+                }
+            }
+
+           
+        }
+    
 
         private void Loaded_Event(object sender, RoutedEventArgs e)
         {
@@ -165,7 +285,7 @@ namespace WpfApp1
         }
         void RaiseAddChipEvent()
         {
-            RoutedEventArgs newEventArgs = new RoutedEventArgs(WKChip.AddChipEvent);
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(WKChip.CreatedChipEvent);
             RaiseEvent(newEventArgs);
         }
 
@@ -183,6 +303,47 @@ namespace WpfApp1
         {
             RoutedEventArgs newEventArgs = new RoutedEventArgs(WKChip.DeleteChipEvent);
             RaiseEvent(newEventArgs);
+        }
+
+        private void AddButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_circleImageState.CurrentState.Name.Equals("AddButtonState"))
+            {
+                RaiseAddButtonClickChipEvent();
+            }
+          
+        }
+
+        public event RoutedEventHandler AddButtonClickChip
+        {
+            add { AddHandler(AddButtonClickChipEvent, value); }
+            remove { RemoveHandler(AddButtonClickChipEvent, value); }
+        }
+        void RaiseAddButtonClickChipEvent()
+        {
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(WKChip.AddButtonClickChipEvent);
+            RaiseEvent(newEventArgs);
+        }
+
+        private void UpdateState(bool useTransition)
+        {
+            if (ShowAddButtonClick)
+            {
+                VisualStateManager.GoToState(this, "AddButtonState", useTransition);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(ImageName) && this.Content.GetType().GetProperty(ImageName,typeof(byte[])).GetValue(this.Content) != null)
+                {
+                    VisualStateManager.GoToState(this, "VisualButtonStateWithImage", useTransition);
+                }
+                else
+                {
+                    VisualStateManager.GoToState(this, "VisualButtonStateWithoutImage", useTransition);
+                }
+                
+            }
+            
         }
     }
 }
