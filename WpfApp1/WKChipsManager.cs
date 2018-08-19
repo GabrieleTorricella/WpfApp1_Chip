@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace WpfApp1
 {
@@ -123,7 +124,7 @@ namespace WpfApp1
 
         public WKChipsManager()
         {
-            SelectedItems = new ObservableCollection<object>();
+            SelectedItems = new ObservableCollection<object>() { new AddChipTemplate()};
             SelectedItemsEditable = new ObservableCollection<object>();
         }
         static WKChipsManager()
@@ -300,7 +301,12 @@ namespace WpfApp1
             {
                 var users = e.NewValue as IEnumerable;
                 if (_wkChips2.listBox != null)
+                {
+               
                     _wkChips2.SetItemSource(users);
+                    
+                }
+                   
             }
         }
 
@@ -311,6 +317,8 @@ namespace WpfApp1
         private void SetItemSource(IEnumerable e)
         {
             this.listBox.ItemsSource = e;
+            
+            
         }
 
         public override void OnApplyTemplate()
@@ -321,10 +329,10 @@ namespace WpfApp1
             _listTo = (ListBox)GetTemplateChild("ListTo");
             collectionView = CollectionViewSource.GetDefaultView(ItemsSource);
             collectionView.Filter = CustomerFilter;
-            if (GroupNameProp!=null && GroupNameProp.Count()>0)
+            if (GroupNameProp != null && GroupNameProp.Count() > 0)
             {
-                GroupNameProp.ToList().ForEach( 
-                    x=> 
+                GroupNameProp.ToList().ForEach(
+                    x =>
                         collectionView.GroupDescriptions.Add(new PropertyGroupDescription(x)));
             }
             pupListBox = (Popup)GetTemplateChild("pupListBox");
@@ -336,7 +344,8 @@ namespace WpfApp1
             _searchBox.GotFocus += _searchBox_GotFocus;
             _searchBox.LostFocus += _searchBox_LostFocus;
             pupListBox.Loaded += PupListBox_Loaded;
-           // _searchBox.Focus();
+            pupListBox.KeyUp += KeyboardManagement;
+            // _searchBox.Focus();
             //this._chipsItem = (ItemsControl)GetTemplateChild("ChipsItems");
             //    //var el = this._chipsItem.ItemTemplate;
             //this._chipsItem.ItemTemplate = ChipEditorTemplate;
@@ -347,7 +356,26 @@ namespace WpfApp1
                                                WKChip.CreatedChipEvent,
                                                new RoutedEventHandler(ChipItem_AddChip), true);
             UpdateStates(false);
-        
+
+        }
+
+        private void KeyboardManagement(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Enter:
+                case Key.Tab:
+                    SelectedItems.Add(listBox.SelectedItem);
+
+                    break;
+                case Key.Up:
+                    break;
+                case Key.Down:
+                    break;
+                case Key.Escape:
+                    break;
+
+            }
         }
 
         private void ChipItem_AddChip(object sender, RoutedEventArgs e)
@@ -362,8 +390,8 @@ namespace WpfApp1
             {
                 item.IsEditable = false;
             }
-           
-            
+
+
         }
 
         private void _searchBox_LostFocus(object sender, RoutedEventArgs e)
@@ -394,17 +422,17 @@ namespace WpfApp1
         {
             if (listBox.SelectedIndex != -1)
             {
-                SelectedItems.Add(listBox.SelectedItem);
+                SelectedItems.Insert(SelectedItems.Count!=0?SelectedItems.Count-1:0,listBox.SelectedItem);
                 _searchBox.Text = null;
             }
-           
-            
-            
 
 
-   
-         
-         
+
+
+
+
+
+
             //var chipItem = new WKChip();
             ////TODO CHANGE FOR MANAGE GENERIC TYPES
             //var user = listBox.SelectedItem as User;
@@ -460,9 +488,9 @@ namespace WpfApp1
             {
                 Type t = ItemsSource.GetType().GetGenericArguments()[0];
                 var el = Activator.CreateInstance(t);
-                el.GetType().GetProperty(ElementiDaVisualizzare).SetValue(el, _searchBox.Text.Substring(0,_searchBox.Text.Count()-1));
+                el.GetType().GetProperty(ElementiDaVisualizzare).SetValue(el, _searchBox.Text.Substring(0, _searchBox.Text.Count() - 1));
                 SelectedItemsEditable.Add(el);
-                SelectedItems.Add(el);
+                SelectedItems.Insert(SelectedItems.Count != 0 ? SelectedItems.Count - 1 : 0, el);
                 _searchBox.Text = string.Empty;
             }
             FilterString = _searchBox.Text;

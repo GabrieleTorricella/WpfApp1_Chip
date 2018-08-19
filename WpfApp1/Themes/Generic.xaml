@@ -32,15 +32,40 @@
     </DataTemplate>
     <local:MultiBooleanToVisibilityConverter x:Key="converter" />
 
+    <DataTemplate x:Key="ChipDataTemplate">
+
+        <local:WKChip Content="{Binding}"
+                      VerticalAlignment="Center"
+                      ContentTemplate="{Binding ChipEditorTemplate,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
+                      PropertyName="{Binding ElementiDaVisualizzare ,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"></local:WKChip>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type local:AddChipTemplate}"
+                  x:Key="AddChipDataTemplate">
+        <TextBox x:Name="SearchBox"
+                 MinWidth="100">
+        </TextBox>
+    </DataTemplate>
+    <local:DataTempalteSelcetorItemsControlChipSelector x:Key="templateSelector"
+                                                        ChipDataTemplate="{StaticResource ChipDataTemplate}"
+                                                        AddChipDataTemplate="{StaticResource AddChipDataTemplate}" />
+
+
+
     <Style TargetType="{x:Type local:WKChip}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:WKChip}">
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
+                    <Border Background="#EFF3F5"
+                            BorderBrush="Black"
+                            BorderThickness="1"
+                            Width="{TemplateBinding Width}"
+                            Height="22"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            CornerRadius="11">
                         <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CircleImageState" >
+                            <VisualStateGroup x:Name="CircleImageState">
 
                                 <VisualState Name="AddButtonState">
                                     <Storyboard>
@@ -84,14 +109,108 @@
                                                 </DiscreteObjectKeyFrame.Value>
                                             </DiscreteObjectKeyFrame>
                                         </ObjectAnimationUsingKeyFrames>
-                                      
+
 
                                     </Storyboard>
                                 </VisualState>
 
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid HorizontalAlignment="Left"
+                        <Grid HorizontalAlignment="Center"
+                              Height="{TemplateBinding Height}"
+                              Background="{TemplateBinding Background}"
+                              VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <Button x:Name="BtnProfilePicture"
+                                    Height="22"
+                                    Background="{TemplateBinding Background}"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Left">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Grid>
+                                            <Ellipse x:Name="PhotoUser"
+                                                     Fill="{TemplateBinding Background}"
+                                                     Stroke="#B9B9B9"
+                                                     StrokeThickness="1"
+                                                     Height="{TemplateBinding Height}"
+                                                     Width="{TemplateBinding Height}" />
+
+                                        </Grid>
+                                    </ControlTemplate>
+
+                                </Button.Template>
+                            </Button>
+
+
+                            <ContentPresenter  x:Name="InformationUser"
+                                               Grid.Column="1"
+                                               Content="{TemplateBinding Content}"
+                                               ContentTemplate="{TemplateBinding ContentTemplate}"
+                                               HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                               VerticalAlignment="{TemplateBinding VerticalAlignment}">
+
+                            </ContentPresenter>
+
+                            <TextBox x:Name="MailUserEdit"
+                                     TextWrapping="Wrap"
+                                     Background="{TemplateBinding Background}"
+                                     Grid.Column="2"
+                                     HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                     VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                     IsEnabled="{TemplateBinding IsEditable}"
+                                     Text="{Binding Mail}">
+                                <TextBox.Template>
+                                    <ControlTemplate TargetType="TextBox">
+                                        <StackPanel Margin="5 0 5 0"
+                                                    Orientation="Horizontal"
+                                                    Background="{TemplateBinding Background}">
+                                            <TextBlock VerticalAlignment="Center"
+                                                       Margin="0">&lt;</TextBlock>
+                                            <ContentPresenter VerticalAlignment="Center"
+                                                              Margin="0"
+                                                              Content="{TemplateBinding Text}">
+                                            </ContentPresenter>
+                                            <TextBlock VerticalAlignment="Center"
+                                                       Margin="0">&gt;</TextBlock>
+                                        </StackPanel>
+
+                                    </ControlTemplate>
+                                </TextBox.Template>
+                            </TextBox>
+
+                            <Button x:Name="Delete"
+                                    MinWidth="10"
+                                    Margin="5,0,2,0"
+                                    HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                    Width="22"
+                                    Grid.Column="3"
+                                    Background="Transparent"
+                                    Height="22"
+                                    BorderThickness="0">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border CornerRadius="11">
+                                            <Border.Background>
+                                                <ImageBrush ImageSource="Images/Cancel.png"></ImageBrush>
+                                            </Border.Background>
+
+                                        </Border>
+
+                                    </ControlTemplate>
+                                </Button.Template>
+
+                            </Button>
+                        </Grid>
+
+                        <!--<Grid HorizontalAlignment="Left"
                               Height="30"
                               Margin="0,0,0,0"
                               VerticalAlignment="Top"
@@ -100,8 +219,10 @@
                               MinWidth="150">
 
                            
-                            <!--<Ellipse Fill="Transparent" Height="100" Margin="0,0,280,0" Stroke="Black" VerticalAlignment="Top"/>-->
-                            <!--<Ellipse Fill="Transparent" HorizontalAlignment="Left" Height="100" Margin="280,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="100"/>-->
+                            -->
+                        <!--<Ellipse Fill="Transparent" Height="100" Margin="0,0,280,0" Stroke="Black" VerticalAlignment="Top"/>-->
+                        <!--<Ellipse Fill="Transparent" HorizontalAlignment="Left" Height="100" Margin="280,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="100"/>-->
+                        <!--
                             <Border CornerRadius="13"
                                     BorderBrush="Gray"
                                     BorderThickness="1"
@@ -161,7 +282,7 @@
                                             Height="12px"/>
                                 </DockPanel>
                             </Border>
-                        </Grid>
+                        </Grid>-->
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -213,53 +334,65 @@
 
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <WrapPanel Orientation="Vertical"
-                                   MinHeight="24"
-                                  >
+                        <StackPanel Orientation="Vertical"
+                                    MinHeight="24">
                             <ItemsControl x:Name="ChipsItems"
-                                          ItemsSource="{TemplateBinding SelectedItems}">
-                                <ItemsControl.ItemTemplate>
+                                          ItemsSource="{TemplateBinding SelectedItems}"
+                                          ItemTemplateSelector="{StaticResource templateSelector}">
+
+                                <!--<ItemsControl.ItemTemplate>
 
                                     <DataTemplate>
-                                        <!--<local:WKChip Content="{Binding}">
+                                        -->
+                                <!--<local:WKChip Content="{Binding}">
                                             -->
-                                        <!--<local:WKChip.ContentTemplate>
+                                <!--<local:WKChip.ContentTemplate>
                                                 <DataTemplate>
                                                     <TextBlock Text="{Binding Name}"></TextBlock>
                                                 </DataTemplate>
                                             </local:WKChip.ContentTemplate>-->
-                                        <!--
+                                <!--
                                         </local:WKChip>-->
+                                <!--
                                         <local:WKChip Content="{Binding}"
+                                                      VerticalAlignment="Center"
                                                       ContentTemplate="{Binding ChipEditorTemplate,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
                                                       PropertyName="{Binding ElementiDaVisualizzare ,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"></local:WKChip>
                                     </DataTemplate>
-                                </ItemsControl.ItemTemplate>
+                                </ItemsControl.ItemTemplate>-->
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal"
-                                                    VerticalAlignment="Top">
-                                        </StackPanel>
+                                        <WrapPanel Orientation="Horizontal"
+                                                   Width="{TemplateBinding Width}"
+                                                   VerticalAlignment="Top"
+                                                   Background="Yellow"
+                                                   MinHeight="24"
+                                                   >
+
+
+                                        </WrapPanel>
+
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
+
                             </ItemsControl>
-                            <WrapPanel Orientation="Horizontal"
-                                       ScrollViewer.CanContentScroll="False">
+                            <TextBox x:Name="SearchBox"
+                                     MinWidth="100">
+                            </TextBox>
+                            <StackPanel Orientation="Horizontal"
+                                        ScrollViewer.CanContentScroll="False">
                                 <ListBox x:Name="ListTo"
                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                     <ListBox.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <WrapPanel Orientation="Horizontal"
                                                        MaxWidth="800"
-                                                       
                                                        ScrollViewer.VerticalScrollBarVisibility="Auto" />
                                         </ItemsPanelTemplate>
                                     </ListBox.ItemsPanel>
                                 </ListBox>
-                                <TextBox x:Name="SearchBox"
-                                         MinWidth="100">
-                                </TextBox>
-                            </WrapPanel>
+
+                            </StackPanel>
                             <Popup x:Name="pupListBox"
                                    PlacementTarget="{Binding ElementName=SearchBox}"
                                    StaysOpen="True"
@@ -268,6 +401,7 @@
                                    VerticalOffset="0"
                                    Width="Auto"
                                    MinWidth="450"
+                                   Focusable="True"
                                    MaxHeight="250"
                                    IsOpen="False"
                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -312,7 +446,7 @@
 
 
 
-                        </WrapPanel>
+                        </StackPanel>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

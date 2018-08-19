@@ -209,11 +209,11 @@ namespace WpfApp1
             BtnProfilePicture.Click += AddButton_Click;
             UpdateState(false);
             _circleImageState = (VisualStateGroup)GetTemplateChild("CircleImageState");
-
             LoadImageSource();
         }
 
-       
+
+
         private void LoadImageSource()
         {
             if (BtnProfilePicture!=null &&this.ShowAddButtonClick)
