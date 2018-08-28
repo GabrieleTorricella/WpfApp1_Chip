@@ -54,7 +54,7 @@ namespace WpfApp1
             Chip.ElementiDaVisualizzare = "Mail";
             Chip.ImageName = "Image";
             Chip.SearchProperties = new List<string>() { "Name", "Surname", "Mail" };
-            Chip.GroupNameProp = new List<string>()
+            Chip.GroupNames = new List<string>()
             {
                 "GroupName",
                 "GroupNameCategory"

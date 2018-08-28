@@ -53,7 +53,7 @@
     </UserControl.Resources>
     <Grid>
         <local:WKChipsManager x:Name="Chip"
-                              ShowPopupOnFocus="True"
+                              ShowPopupOnFocus="False"
                               DataTemplateItemsListbox="{StaticResource TemplateChipMailToUser}"
                               ChipEditorTemplate="{StaticResource TemplateMailToUser}">
 

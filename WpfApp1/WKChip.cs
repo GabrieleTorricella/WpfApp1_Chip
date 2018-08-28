@@ -152,7 +152,10 @@ namespace WpfApp1
 
         public bool? IsEditable
         {
-            get => (bool?)base.GetValue(WKChip.IsEditableProperty);
+            get
+            {
+                return (bool?)base.GetValue(WKChip.IsEditableProperty);
+            }
             set
             {
                 if (value == null)
@@ -181,14 +184,15 @@ namespace WpfApp1
 
         private static void OnIsEditableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is WKChip item)
+            if(d is WKChip)
             {
+                var item = d as WKChip;
                 var result = e.NewValue != null ? e.NewValue as bool? : false;
                 if (item._mailUserEditable == null)
-                    item.IsEditable= result;
+                    item.IsEditable = result;
                 else
                     item.IsEditable = result;
-            }
+            }                     
         }
 
         public override void OnApplyTemplate()

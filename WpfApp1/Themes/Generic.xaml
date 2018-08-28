@@ -37,14 +37,24 @@
         <local:WKChip Content="{Binding}"
                       VerticalAlignment="Center"
                       ContentTemplate="{Binding ChipEditorTemplate,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
-                      PropertyName="{Binding ElementiDaVisualizzare ,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"></local:WKChip>
+                      PropertyName="{Binding ElementiDaVisualizzare ,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}" 
+                      
+                      >
+                        
+        </local:WKChip>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type local:AddChipTemplate}"
                   x:Key="AddChipDataTemplate">
-        <TextBox x:Name="SearchBox"
-                 MinWidth="100">
-        </TextBox>
+        <local:WKChipSearch SearchProperties="{Binding SearchProperties, RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
+                            GroupNames="{Binding GroupNames, RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
+                            ElementiDaVisualizzare="{Binding ElementiDaVisualizzare, RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
+                            ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
+                            DataTemplateItemsListbox="{Binding DataTemplateItemsListbox, RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
+                            ShowPopupOnFocus="{Binding ShowPopupOnFocus, RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
+                            
+                            >
+        </local:WKChipSearch>
     </DataTemplate>
     <local:DataTempalteSelcetorItemsControlChipSelector x:Key="templateSelector"
                                                         ChipDataTemplate="{StaticResource ChipDataTemplate}"
@@ -296,6 +306,66 @@
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
+                       
+                        <StackPanel Orientation="Vertical"
+                                    MinHeight="24">
+                            <ItemsControl x:Name="ChipsItems"
+                                          ItemsSource="{TemplateBinding SelectedItems}"
+                                          ItemTemplateSelector="{StaticResource templateSelector}">
+
+                                <!--<ItemsControl.ItemTemplate>
+
+                                    <DataTemplate>
+                                        -->
+                                <!--<local:WKChip Content="{Binding}">
+                                            -->
+                                <!--<local:WKChip.ContentTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Name}"></TextBlock>
+                                                </DataTemplate>
+                                            </local:WKChip.ContentTemplate>-->
+                                <!--
+                                        </local:WKChip>-->
+                                <!--
+                                        <local:WKChip Content="{Binding}"
+                                                      VerticalAlignment="Center"
+                                                      ContentTemplate="{Binding ChipEditorTemplate,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
+                                                      PropertyName="{Binding ElementiDaVisualizzare ,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"></local:WKChip>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>-->
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal"
+                                                   Width="{TemplateBinding Width}"
+                                                   VerticalAlignment="Top"
+                                                   Background="Yellow"
+                                                   MinHeight="24">
+
+
+                                        </WrapPanel>
+
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+
+                            </ItemsControl>
+
+
+
+
+                        </StackPanel>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type local:WKChipSearch}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:WKChipSearch}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup Name="ValueStates">
 
@@ -334,65 +404,10 @@
 
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <StackPanel Orientation="Vertical"
-                                    MinHeight="24">
-                            <ItemsControl x:Name="ChipsItems"
-                                          ItemsSource="{TemplateBinding SelectedItems}"
-                                          ItemTemplateSelector="{StaticResource templateSelector}">
-
-                                <!--<ItemsControl.ItemTemplate>
-
-                                    <DataTemplate>
-                                        -->
-                                <!--<local:WKChip Content="{Binding}">
-                                            -->
-                                <!--<local:WKChip.ContentTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Text="{Binding Name}"></TextBlock>
-                                                </DataTemplate>
-                                            </local:WKChip.ContentTemplate>-->
-                                <!--
-                                        </local:WKChip>-->
-                                <!--
-                                        <local:WKChip Content="{Binding}"
-                                                      VerticalAlignment="Center"
-                                                      ContentTemplate="{Binding ChipEditorTemplate,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
-                                                      PropertyName="{Binding ElementiDaVisualizzare ,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"></local:WKChip>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>-->
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <WrapPanel Orientation="Horizontal"
-                                                   Width="{TemplateBinding Width}"
-                                                   VerticalAlignment="Top"
-                                                   Background="Yellow"
-                                                   MinHeight="24"
-                                                   >
-
-
-                                        </WrapPanel>
-
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-
-                            </ItemsControl>
+                        <StackPanel>
                             <TextBox x:Name="SearchBox"
                                      MinWidth="100">
                             </TextBox>
-                            <StackPanel Orientation="Horizontal"
-                                        ScrollViewer.CanContentScroll="False">
-                                <ListBox x:Name="ListTo"
-                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                    <ListBox.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <WrapPanel Orientation="Horizontal"
-                                                       MaxWidth="800"
-                                                       ScrollViewer.VerticalScrollBarVisibility="Auto" />
-                                        </ItemsPanelTemplate>
-                                    </ListBox.ItemsPanel>
-                                </ListBox>
-
-                            </StackPanel>
                             <Popup x:Name="pupListBox"
                                    PlacementTarget="{Binding ElementName=SearchBox}"
                                    StaysOpen="True"
@@ -421,7 +436,7 @@
                                 <Border Visibility="{Binding Path=IsVisible, ElementName=pupListBox, Mode=OneWay}"
                                         Background="#FFFFFF"
                                         BorderBrush="#B9B9B9">
-                                    <ListBox  x:Name="ListItems"
+                                    <ListBox  x:Name="ListItems"                                              
                                               ItemTemplate="{TemplateBinding DataTemplateItemsListbox}"
                                               Visibility="{Binding Path=IsVisible, ElementName=pupListBox, Mode=OneWay}">
                                         <ListBox.GroupStyle>
@@ -442,16 +457,12 @@
                                     </ListBox>
                                 </Border>
                             </Popup>
-
-
-
-
                         </StackPanel>
+
+
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-
-
 </ResourceDictionary>

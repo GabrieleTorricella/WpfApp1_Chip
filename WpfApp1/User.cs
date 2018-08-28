@@ -10,11 +10,30 @@ namespace WpfApp1
     {
         private string _name, _surname, _mail, _groupName;
 
-        public string Name { get => _name; set => _name = value; }
-        public string Surname { get => _surname; set => _surname = value; }
-        public string Mail { get => _mail; set => _mail = value; }
-        public string GroupName { get => _groupName; set => _groupName = value; }
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
 
+        public string Surname
+        {
+            get { return _surname; }
+            set { _surname = value; }
+        }
+
+        public string Mail
+        {
+            get { return _mail; }
+            set { _mail = value; }
+        }
+
+        public string GroupName
+        {
+            get { return _groupName; }
+            set { _groupName = value; }
+        }
+      
         public User()
         {
 

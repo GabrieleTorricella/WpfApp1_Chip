@@ -58,6 +58,7 @@
     <Compile Include="DataTempalteSelcetorItemsControlChipSelector.cs" />
     <Compile Include="User.cs" />
     <Compile Include="WKChip.cs" />
+    <Compile Include="WKChipSearch.cs" />
     <Compile Include="WKChipsManager.cs" />
     <Compile Include="WKRecipientSelector.xaml.cs">
       <DependentUpon>WKRecipientSelector.xaml</DependentUpon>
