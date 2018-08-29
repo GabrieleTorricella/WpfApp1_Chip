@@ -33,14 +33,11 @@
     <local:MultiBooleanToVisibilityConverter x:Key="converter" />
 
     <DataTemplate x:Key="ChipDataTemplate">
-
         <local:WKChip Content="{Binding}"
                       VerticalAlignment="Center"
                       ContentTemplate="{Binding ChipEditorTemplate,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
-                      PropertyName="{Binding ElementiDaVisualizzare ,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}" 
-                      
-                      >
-                        
+                      PropertyName="{Binding ElementiDaVisualizzare ,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}">
+
         </local:WKChip>
     </DataTemplate>
 
@@ -51,14 +48,41 @@
                             ElementiDaVisualizzare="{Binding ElementiDaVisualizzare, RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
                             ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
                             DataTemplateItemsListbox="{Binding DataTemplateItemsListbox, RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
-                            ShowPopupOnFocus="{Binding ShowPopupOnFocus, RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
-                            
-                            >
+                            ShowPopupOnFocus="{Binding ShowPopupOnFocus, RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}">
         </local:WKChipSearch>
     </DataTemplate>
     <local:DataTempalteSelcetorItemsControlChipSelector x:Key="templateSelector"
                                                         ChipDataTemplate="{StaticResource ChipDataTemplate}"
                                                         AddChipDataTemplate="{StaticResource AddChipDataTemplate}" />
+
+    <DataTemplate x:Key="GroupNameTemplate">
+        <Border Margin="2"
+                BorderBrush="Brown"
+                BorderThickness="1"
+                CornerRadius="5">
+            <TextBlock Margin="2"
+                       FontSize="16"
+                       FontWeight="Bold"
+                       Foreground="Brown"
+                       Text="{Binding Path=Name}" />
+        </Border>
+    </DataTemplate>
+    <DataTemplate x:Key="GroupCategoryTemplate">
+        <Border Margin="2"
+                BorderBrush="Brown"
+                Background="AliceBlue"
+                BorderThickness="1"
+                CornerRadius="5">
+            <TextBlock Margin="2"
+                       FontSize="12"
+                       Foreground="Red"
+                       TextAlignment="Center"
+                       Text="{Binding Path=Name}" />
+        </Border>
+    </DataTemplate>
+    <local:MyTemplateSelector x:Key="MyTemplateSelectorObj"
+                              GroupCategoryTemplate="{StaticResource GroupCategoryTemplate}"
+                              GroupNameTemplate="{StaticResource GroupNameTemplate}" />
 
 
 
@@ -306,7 +330,7 @@
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
-                       
+
                         <StackPanel Orientation="Vertical"
                                     MinHeight="24">
                             <ItemsControl x:Name="ChipsItems"
@@ -433,15 +457,15 @@
                                     </MultiBinding>
                                 </Popup.Visibility>-->
 
-                                <Border Visibility="{Binding Path=IsVisible, ElementName=pupListBox, Mode=OneWay}"
+                                <!--<Border Visibility="{Binding Path=IsVisible, ElementName=pupListBox, Mode=OneWay}"
                                         Background="#FFFFFF"
-                                        BorderBrush="#B9B9B9">
-                                    <ListBox  x:Name="ListItems"                                              
-                                              ItemTemplate="{TemplateBinding DataTemplateItemsListbox}"
-                                              Visibility="{Binding Path=IsVisible, ElementName=pupListBox, Mode=OneWay}">
-                                        <ListBox.GroupStyle>
-                                            <GroupStyle>
-                                                <GroupStyle.HeaderTemplate>
+                                        BorderBrush="#B9B9B9">-->
+                                <ListBox  x:Name="ListItems"
+                                          ItemTemplate="{TemplateBinding DataTemplateItemsListbox}"
+                                          Visibility="{Binding Path=IsVisible, ElementName=pupListBox, Mode=OneWay}">
+                                    <ListBox.GroupStyle>
+                                        <GroupStyle HeaderTemplateSelector="{StaticResource MyTemplateSelectorObj}">
+                                            <!--<GroupStyle.HeaderTemplate>
                                                     <DataTemplate>
                                                         <TextBlock Foreground="#000000"
                                                                    Background="#EFEFEF"
@@ -449,13 +473,13 @@
                                                                    Margin="5px"
                                                                    Text="{Binding Path=Name}" />
                                                     </DataTemplate>
-                                                </GroupStyle.HeaderTemplate>
-                                            </GroupStyle>
-                                        </ListBox.GroupStyle>
+                                                </GroupStyle.HeaderTemplate>-->
+                                        </GroupStyle>
+                                    </ListBox.GroupStyle>
 
 
-                                    </ListBox>
-                                </Border>
+                                </ListBox>
+                                <!--</Border>-->
                             </Popup>
                         </StackPanel>
 
