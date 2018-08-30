@@ -95,8 +95,6 @@ namespace WpfApp1
             }
         }
 
-
-
         // Using a DependencyProperty as the backing store for ImageName.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ImageNameProperty =
             DependencyProperty.Register("ImageName", typeof(string), typeof(WKChip), new PropertyMetadata(default(string),new PropertyChangedCallback(WKChip.ImageNameCallback)));
@@ -130,6 +128,7 @@ namespace WpfApp1
               
             }
         }
+
         private void SetBinding()
         {
             Binding myBinding = new Binding(PropertyName);
@@ -178,9 +177,7 @@ namespace WpfApp1
                     typeof(WKChip),
                     new FrameworkPropertyMetadata(null, new PropertyChangedCallback(WKChip.OnIsEditableChanged)));
             
-        }
-
-     
+        }     
 
         private static void OnIsEditableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -271,11 +268,8 @@ namespace WpfApp1
                 {
                     BtnProfilePicture.Background = new SolidColorBrush {};
                 }
-            }
-
-           
-        }
-    
+            }           
+        }    
 
         private void Loaded_Event(object sender, RoutedEventArgs e)
         {
@@ -348,6 +342,18 @@ namespace WpfApp1
                 
             }
             
+        }
+
+        protected override void OnGotFocus(RoutedEventArgs e)
+        {
+            VisualStateManager.GoToState(this, "FocusedElementState", true);
+            Console.WriteLine("got focus " + ((UserCase)this.Content).Name);
+        }
+
+        protected override void OnLostFocus(RoutedEventArgs e)
+        {
+            VisualStateManager.GoToState(this, "NotFocusedElementState", true);
+    
         }
     }
 }

@@ -10,11 +10,12 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace WpfApp1
 {
-    
-    
+
+
     public class WKChipsManager : Control, INotifyPropertyChanged
     {
         public static readonly RoutedEvent TextChangedEvent = EventManager.RegisterRoutedEvent("TextChanged", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(WKChipsManager));
@@ -36,19 +37,19 @@ namespace WpfApp1
         // For demonstration purposes we raise the event when the MyButtonSimple is clicked
         private ItemsControl _chipsItem;
         private ComboBox _chipsCombobox = new ComboBox();
-        
+
         public static readonly DependencyProperty ItemsSourceProperty;
-        public static readonly DependencyProperty ElementiDaVisualizzareProperty;      
+        public static readonly DependencyProperty ElementiDaVisualizzareProperty;
         public static readonly DependencyProperty GroupNameProperty;
         public static readonly DependencyProperty ChipEditorTemplateProperty;
-       
-        
-        
+
+
+
         private DataTemplate data = new DataTemplate();
-       
+
         public event PropertyChangedEventHandler PropertyChanged;
-        
-        private List<WKChip> lstChip;             
+
+        private List<WKChip> lstChip;
         private IList SelectedItemsEditable;
 
         public string ImageName
@@ -67,12 +68,12 @@ namespace WpfApp1
             get { return (string)base.GetValue(WKChipsManager.ElementiDaVisualizzareProperty); }
             set { if (value == null) { base.ClearValue(WKChipsManager.ElementiDaVisualizzareProperty); return; } base.SetValue(WKChipsManager.ElementiDaVisualizzareProperty, value); }
         }
-      
+
         public IEnumerable<string> GroupNames
         {
             get { return (IEnumerable<string>)base.GetValue(WKChipsManager.GroupNameProperty); }
             set { if (value == null) { base.ClearValue(WKChipsManager.GroupNameProperty); return; } base.SetValue(WKChipsManager.GroupNameProperty, value); }
-        }      
+        }
 
         public IList SelectedItems
         {
@@ -91,8 +92,9 @@ namespace WpfApp1
 
         public WKChipsManager()
         {
-            SelectedItems = new ObservableCollection<object>() { new AddChipTemplate()};
+            SelectedItems = new ObservableCollection<object>() { new AddChipTemplate() };
             SelectedItemsEditable = new ObservableCollection<object>();
+            Focusable = false;
         }
         static WKChipsManager()
         {
@@ -110,7 +112,7 @@ namespace WpfApp1
                     typeof(string),
                     typeof(WKChipsManager),
                     new FrameworkPropertyMetadata(null));
-           
+
             WKChipsManager.GroupNameProperty =
                DependencyProperty.Register(
                    "GroupNames",
@@ -142,7 +144,7 @@ namespace WpfApp1
         {
             get { return (DataTemplate)GetValue(WKChipsManager.ChipEditorTemplateProperty); }
             set { SetValue(ChipEditorTemplateProperty, value); }
-        }   
+        }
 
         public DataTemplate DataTemplateItemsListbox
         {
@@ -154,7 +156,7 @@ namespace WpfApp1
         public static readonly DependencyProperty DataTemplateItemsListboxProperty =
             DependencyProperty.Register("DataTemplateItemsListbox", typeof(DataTemplate), typeof(WKChipsManager), new PropertyMetadata(default(DataTemplate)));
 
-    
+
         private void NotifyPropertyChanged(String propertyName)
         {
             if (PropertyChanged != null)
@@ -225,12 +227,13 @@ namespace WpfApp1
         {
 
         }
-                  
+
 
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-        
+
+            _chipsItem = this.GetTemplateChild("ChipsItems") as ItemsControl;
             EventManager.RegisterClassHandler(typeof(WKChip),
                                                 WKChip.DeleteChipEvent,
                                                 new RoutedEventHandler(ChipItem_DeleteChip), true);
@@ -240,19 +243,108 @@ namespace WpfApp1
             EventManager.RegisterClassHandler(typeof(WKChipSearch),
                                               WKChipSearch.SelectedChipEvent,
                                               new RoutedEventHandler(ChipItem_SelectedChip), true);
+
+            EventManager.RegisterClassHandler(typeof(WKChip),
+                                            WKChip.AddButtonClickChipEvent,
+                                            new RoutedEventHandler(ChipItem_AddChip_NewWindow), true);
+
+            EventManager.RegisterClassHandler(typeof(WKChip),
+                                            WKChip.MouseLeftButtonDownEvent,
+                                            new RoutedEventHandler(ChipItem_MouseLeftButtonDown),
+                                            true
+                                            );
+
+            EventManager.RegisterClassHandler(typeof(WKChipsManager),
+                                            WKChip.KeyDownEvent,
+                                            new KeyEventHandler(ChipItem_KeyDown),
+                                            true
+                                            );
         }
+
+        private void ChipItem_AddChip_NewWindow(object sender, RoutedEventArgs e)
+        {
+            Window w = new Window();
+            w.Width = 300;
+            w.Height = 100;
+
+            w.Content = new TextBlock() { Text = "Nuovo utente" };
+            w.Show();
+        }
+
+        private void ChipItem_MouseLeftButtonDown(object sender, RoutedEventArgs e)
+        {
+            WKChip chip = sender as WKChip;                      
+            chip.Focus();
+            Console.WriteLine("Focused element: " + ((WpfApp1.User)((System.Windows.Controls.ContentControl)(FocusManager.GetFocusedElement(FocusManager.GetFocusScope(this)))).Content).Name.ToString());
+        }
+
+        private void ChipItem_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Enter:
+                case Key.Tab:
+                    break;
+                case Key.Up:
+                    break;
+                case Key.Down:
+                    break;
+                case Key.Escape:
+                    break;
+                case Key.Left:                    
+                    break;
+                case Key.Right:                  
+                    break;
+                case Key.Delete:
+                    var el = FocusManager.GetFocusedElement(FocusManager.GetFocusScope(Application.Current.MainWindow)) as WKChip;
+                    if(el != null && el is WKChip)
+                    {
+                        SelectedItems.Remove(el.Content);
+                    }                    
+                    break;
+            }
+            Console.WriteLine("Focused element: " + FocusManager.GetFocusedElement(FocusManager.GetFocusScope(Application.Current.MainWindow)).ToString());
+        }
+        
+        private void SetNextFocusedChip(object senderObject, Key pressedKey)
+        {
+            WKChip chip = senderObject as WKChip;
+            UserCase focusedChip = chip.Content as UserCase;
+            IList<UserCase> chipsList = _chipsItem.Items.Cast<UserCase>().Take(this.SelectedItems.Count - 1).ToList();
+
+            // TODO: gestire caso in cui non è presente la mail e controlli su idice
+            int indexOfFocusedChip = chipsList.IndexOf(focusedChip);
+            ContentPresenter cp = null;
+            switch (pressedKey)
+            {
+                case Key.Left:
+                    cp = ((_chipsItem.ItemContainerGenerator.ContainerFromIndex(indexOfFocusedChip - 1))) as ContentPresenter;
+                    break;
+                case Key.Right:
+                    cp = ((_chipsItem.ItemContainerGenerator.ContainerFromIndex(indexOfFocusedChip + 1))) as ContentPresenter;
+                    break;
+            }
+          
+            if(cp != null)
+            {
+                WKChip nextFocusedChip = (VisualTreeHelper.GetChild(cp, 0)) as WKChip;
+                if(nextFocusedChip != null)
+                {
+                    nextFocusedChip.Focus();                    
+                }                
+            }           
+        }       
 
         private void ChipItem_SelectedChip(object sender, RoutedEventArgs e)
         {
             var item = sender as WKChipSearch;
-            CustomEventArgs customEventArgs = e as CustomEventArgs;                 
+                CustomEventArgs customEventArgs = e as CustomEventArgs;
 
-            if(customEventArgs.IsEditableItem)
+            if (customEventArgs.IsEditableItem)
             {
                 SelectedItemsEditable.Add(e.OriginalSource);
-            }  
-            SelectedItems.Insert(SelectedItems.Count != 0 ? SelectedItems.Count - 1 : 0, e.OriginalSource);
-            //item.TextValue = string.Empty;            
+            }
+            SelectedItems.Insert(SelectedItems.Count != 0 ? SelectedItems.Count - 1 : 0, e.OriginalSource);                  
         }
 
         private void ChipItem_AddChip(object sender, RoutedEventArgs e)
@@ -267,19 +359,14 @@ namespace WpfApp1
             {
                 item.IsEditable = false;
             }
+        }
 
-
-        }     
-      
         private void ChipItem_DeleteChip(object sender, RoutedEventArgs e)
-        {
-            //lstChip.Remove(sender as WKChip);
-            //_listTo.Items.Remove(sender as WKChip);
-            // SelectedItems.Remove();
+        {         
             var el = sender as WKChip;
             SelectedItems.Remove(el.Content);
-        }       
-   
+        }
+
     }
     public class MultiBooleanToVisibilityConverter : IMultiValueConverter
     {

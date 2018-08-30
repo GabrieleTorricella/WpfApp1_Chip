@@ -22,7 +22,7 @@
         <ListBox x:Name="lstChips" Grid.Column="1">
             
         </ListBox>-->
-        <local:WKRecipientSelector>
+        <local:WKRecipientSelector Focusable="False">
             
         </local:WKRecipientSelector>
         <!--<ListBox Name="lstItem" HorizontalAlignment="Left" Margin="39,51,0,0" VerticalAlignment="Top"

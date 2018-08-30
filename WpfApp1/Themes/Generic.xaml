@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:WpfApp1"
                     xmlns:System="clr-namespace:System;assembly=mscorlib">
-
+    <Color x:Key="ColorBlueFirstStop">#FFFFFF</Color>
+    <Color x:Key="ColorBlueSecondStop">#FFFFFF</Color>
     <DataTemplate x:Key="TemplateMailToUser">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -33,7 +34,8 @@
     <local:MultiBooleanToVisibilityConverter x:Key="converter" />
 
     <DataTemplate x:Key="ChipDataTemplate">
-        <local:WKChip Content="{Binding}"
+        <local:WKChip Content="{Binding}" 
+                      x:Name="ChipTest"
                       VerticalAlignment="Center"
                       ContentTemplate="{Binding ChipEditorTemplate,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
                       PropertyName="{Binding ElementiDaVisualizzare ,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}">
@@ -43,7 +45,7 @@
 
     <DataTemplate DataType="{x:Type local:AddChipTemplate}"
                   x:Key="AddChipDataTemplate">
-        <local:WKChipSearch SearchProperties="{Binding SearchProperties, RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
+        <local:WKChipSearch Focusable="False" SearchProperties="{Binding SearchProperties, RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
                             GroupNames="{Binding GroupNames, RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
                             ElementiDaVisualizzare="{Binding ElementiDaVisualizzare, RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
                             ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
@@ -90,7 +92,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:WKChip}">
-                    <Border Background="#EFF3F5"
+                    <Border Name="chipBorder"
+                            Background="White"
                             BorderBrush="Black"
                             BorderThickness="1"
                             Width="{TemplateBinding Width}"
@@ -98,9 +101,9 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             CornerRadius="11">
+                      
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CircleImageState">
-
                                 <VisualState Name="AddButtonState">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnProfilePicture"
@@ -114,7 +117,6 @@
                                         </ObjectAnimationUsingKeyFrames>
 
                                     </Storyboard>
-
                                 </VisualState>
 
                                 <VisualState Name="VisualButtonStateWithImage">
@@ -128,8 +130,6 @@
                                                 </DiscreteObjectKeyFrame.Value>
                                             </DiscreteObjectKeyFrame>
                                         </ObjectAnimationUsingKeyFrames>
-
-
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState Name="VisualButtonStateWithoutImage">
@@ -144,10 +144,34 @@
                                             </DiscreteObjectKeyFrame>
                                         </ObjectAnimationUsingKeyFrames>
 
-
                                     </Storyboard>
                                 </VisualState>
-
+                                <VisualState Name="FocusedElementState">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Duration="0:0:0.0"                                                       
+                                                        Storyboard.TargetProperty="(Border.Background)"
+                                                        Storyboard.TargetName="chipBorder" >
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <SolidColorBrush Color="Green" />
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState Name="NotFocusedElementState">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Duration="0:0:0.0"
+                                                                       Storyboard.TargetProperty="(Border.Background)"
+                                                                       Storyboard.TargetName="chipBorder">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <SolidColorBrush Color="White" />
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid HorizontalAlignment="Center"
@@ -161,7 +185,7 @@
                                 <ColumnDefinition Width="Auto"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
-                            <Button x:Name="BtnProfilePicture"
+                            <Button x:Name="BtnProfilePicture" Focusable="False"
                                     Height="22"
                                     Background="{TemplateBinding Background}"
                                     Grid.Column="0"
@@ -178,21 +202,19 @@
 
                                         </Grid>
                                     </ControlTemplate>
-
                                 </Button.Template>
                             </Button>
 
 
-                            <ContentPresenter  x:Name="InformationUser"
+                            <ContentPresenter  x:Name="InformationUser" Focusable="False"
                                                Grid.Column="1"
                                                Content="{TemplateBinding Content}"
                                                ContentTemplate="{TemplateBinding ContentTemplate}"
                                                HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
                                                VerticalAlignment="{TemplateBinding VerticalAlignment}">
-
                             </ContentPresenter>
 
-                            <TextBox x:Name="MailUserEdit"
+                            <TextBox x:Name="MailUserEdit" Focusable="False"
                                      TextWrapping="Wrap"
                                      Background="{TemplateBinding Background}"
                                      Grid.Column="2"
@@ -218,8 +240,8 @@
                                     </ControlTemplate>
                                 </TextBox.Template>
                             </TextBox>
-
                             <Button x:Name="Delete"
+                                    Focusable="False"
                                     MinWidth="10"
                                     Margin="5,0,2,0"
                                     HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
@@ -235,88 +257,11 @@
                                             <Border.Background>
                                                 <ImageBrush ImageSource="Images/Cancel.png"></ImageBrush>
                                             </Border.Background>
-
                                         </Border>
-
                                     </ControlTemplate>
                                 </Button.Template>
-
                             </Button>
                         </Grid>
-
-                        <!--<Grid HorizontalAlignment="Left"
-                              Height="30"
-                              Margin="0,0,0,0"
-                              VerticalAlignment="Top"
-                              Background="#EFF3F5"
-                             
-                              MinWidth="150">
-
-                           
-                            -->
-                        <!--<Ellipse Fill="Transparent" Height="100" Margin="0,0,280,0" Stroke="Black" VerticalAlignment="Top"/>-->
-                        <!--<Ellipse Fill="Transparent" HorizontalAlignment="Left" Height="100" Margin="280,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="100"/>-->
-                        <!--
-                            <Border CornerRadius="13"
-                                    BorderBrush="Gray"
-                                    BorderThickness="1"
-                                    DockPanel.Dock="Top"
-                                    Width="Auto">
-                                <DockPanel HorizontalAlignment="Left"
-                                           Margin="-1"
-                                           VerticalAlignment="Top"
-                                           Height="30"
-                                           MinWidth="150"
-                                           Background="Transparent"
-                                           Width="Auto">
-                                    <Button x:Name="BtnProfilePicture"
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Top"
-                                            >
-                                        <Button.Template>
-                                            <ControlTemplate>
-                                                <Grid>
-                                                    <Ellipse x:Name="PhotoUser"
-                                                             HorizontalAlignment="Left"
-                                                             Height="30"
-                                                             StrokeThickness="1"
-                                                             Margin="0,0,0,0"
-                                                             Stroke="#B9B9B9"
-                                                             VerticalAlignment="Top"
-                                                             Fill="{TemplateBinding Background}"
-                                                             MinWidth="30" />
-                                                  
-                                                </Grid>
-                                            </ControlTemplate>
-                                        </Button.Template>
-                                    </Button >
-                                    
-
-
-                                    <ContentPresenter x:Name="InformationUser"
-                                                      Content="{TemplateBinding Content}"
-                                                      ContentTemplate="{TemplateBinding ContentTemplate}" />
-                                    <Label Content="&lt;"></Label>
-
-                                    <TextBox x:Name="MailUserEdit"
-                                             TextWrapping="Wrap"
-                                             MinWidth="150"
-                                             Background="#EFF3F5"
-                                             IsEnabled="{TemplateBinding IsEditable}"
-                                            Text="{Binding Mail}"
-                                             />
-                                    <Label Content="&gt;"></Label>
-                                    <Button x:Name="Delete"
-                                            Content="X"
-                                            MinWidth="10"
-                                            Margin="0,5,5,5"
-                                            FontSize="8"
-                                            Width="12px"
-                                            Background="#B9B9B9"
-                                            Height="12px"/>
-                                </DockPanel>
-                            </Border>
-                        </Grid>-->
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -333,49 +278,21 @@
 
                         <StackPanel Orientation="Vertical"
                                     MinHeight="24">
-                            <ItemsControl x:Name="ChipsItems"
+                            <ItemsControl x:Name="ChipsItems" Focusable="False"
                                           ItemsSource="{TemplateBinding SelectedItems}"
                                           ItemTemplateSelector="{StaticResource templateSelector}">
 
-                                <!--<ItemsControl.ItemTemplate>
-
-                                    <DataTemplate>
-                                        -->
-                                <!--<local:WKChip Content="{Binding}">
-                                            -->
-                                <!--<local:WKChip.ContentTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Text="{Binding Name}"></TextBlock>
-                                                </DataTemplate>
-                                            </local:WKChip.ContentTemplate>-->
-                                <!--
-                                        </local:WKChip>-->
-                                <!--
-                                        <local:WKChip Content="{Binding}"
-                                                      VerticalAlignment="Center"
-                                                      ContentTemplate="{Binding ChipEditorTemplate,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"
-                                                      PropertyName="{Binding ElementiDaVisualizzare ,  RelativeSource={RelativeSource AncestorType=local:WKChipsManager}}"></local:WKChip>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>-->
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <WrapPanel Orientation="Horizontal"
                                                    Width="{TemplateBinding Width}"
                                                    VerticalAlignment="Top"
-                                                   Background="Yellow"
+                                                   Background="Yellow" Focusable="False"
                                                    MinHeight="24">
-
-
                                         </WrapPanel>
-
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
-
                             </ItemsControl>
-
-
-
-
                         </StackPanel>
                     </Border>
                 </ControlTemplate>
@@ -392,7 +309,6 @@
                             BorderThickness="{TemplateBinding BorderThickness}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup Name="ValueStates">
-
                                 <!--Make the Value property red when it is negative.-->
                                 <VisualState Name="PopupOpenOnTextEdit">
                                     <Storyboard>
@@ -405,11 +321,8 @@
                                                 </DiscreteObjectKeyFrame.Value>
                                             </DiscreteObjectKeyFrame>
                                         </ObjectAnimationUsingKeyFrames>
-
                                     </Storyboard>
-
                                 </VisualState>
-
                                 <VisualState Name="PopupOpenOnFocus">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="pupListBox"
@@ -421,11 +334,8 @@
                                                 </DiscreteObjectKeyFrame.Value>
                                             </DiscreteObjectKeyFrame>
                                         </ObjectAnimationUsingKeyFrames>
-
-
                                     </Storyboard>
                                 </VisualState>
-
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <StackPanel>
@@ -445,45 +355,16 @@
                                    IsOpen="False"
                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                    ScrollViewer.VerticalScrollBarVisibility="Auto">
-
-                                <!--<Popup.Visibility>
-                                    <MultiBinding Converter="{StaticResource converter}"
-                                                  ConverterParameter="FormatLastFirst">
-                                        <Binding Path="IsFocused"
-                                                 ElementName="SearchBox"
-                                                 Mode="OneWay" />
-                                        <Binding Path="ShowPopupOnFocus"
-                                                 RelativeSource="{RelativeSource AncestorType=local:WKChipsManager}" />
-                                    </MultiBinding>
-                                </Popup.Visibility>-->
-
-                                <!--<Border Visibility="{Binding Path=IsVisible, ElementName=pupListBox, Mode=OneWay}"
-                                        Background="#FFFFFF"
-                                        BorderBrush="#B9B9B9">-->
                                 <ListBox  x:Name="ListItems"
                                           ItemTemplate="{TemplateBinding DataTemplateItemsListbox}"
                                           Visibility="{Binding Path=IsVisible, ElementName=pupListBox, Mode=OneWay}">
                                     <ListBox.GroupStyle>
                                         <GroupStyle HeaderTemplateSelector="{StaticResource MyTemplateSelectorObj}">
-                                            <!--<GroupStyle.HeaderTemplate>
-                                                    <DataTemplate>
-                                                        <TextBlock Foreground="#000000"
-                                                                   Background="#EFEFEF"
-                                                                   FontSize="12px"
-                                                                   Margin="5px"
-                                                                   Text="{Binding Path=Name}" />
-                                                    </DataTemplate>
-                                                </GroupStyle.HeaderTemplate>-->
                                         </GroupStyle>
                                     </ListBox.GroupStyle>
-
-
                                 </ListBox>
-                                <!--</Border>-->
                             </Popup>
                         </StackPanel>
-
-
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

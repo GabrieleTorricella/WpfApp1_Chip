@@ -201,14 +201,20 @@ namespace WpfApp1
             _pupListBox = (Popup)GetTemplateChild("pupListBox");
             _listBox.ItemsSource = _collectionView;
             _listBox.DisplayMemberPath = _viewElement;
-            _listBox.SelectionChanged += ListBox_SelectionChanged;
+            //_listBox.SelectionChanged += ListBox_SelectionChanged;
             _listBox.GotFocus += ListBox_GotFocus;
+            _listBox.LostFocus += ListBox_LostFocus;
+            _listBox.ItemContainerGenerator.StatusChanged += ItemContainerGenerator_StatusChanged;
+
+
             _searchBox = (TextBox)GetTemplateChild("SearchBox");
             _searchBox.TextChanged += SearchBox_TextChanged;
             _searchBox.GotFocus += SearchBox_GotFocus;
             _searchBox.LostFocus += SearchBox_LostFocus;
             _pupListBox.Loaded += PupListBox_Loaded;
-            _pupListBox.KeyUp += PupListBox_KeyUp;              
+            _pupListBox.KeyUp += PupListBox_KeyUp;
+
+            EventManager.RegisterClassHandler(typeof(ListBoxItem), ListBoxItem.MouseLeftButtonDownEvent, new RoutedEventHandler(this.MouseLeftButtonDownClassHandler));
 
             if (GroupNames != null && GroupNames.Count() > 0)
             {
@@ -216,12 +222,46 @@ namespace WpfApp1
                     x =>
                         _collectionView.GroupDescriptions.Add(new PropertyGroupDescription(x)));
             }
+
             UpdateStates(false);
+        }
+
+        private void MouseLeftButtonDownClassHandler(object sender, RoutedEventArgs e)
+        {
+            if (_listBox.SelectedIndex != -1)
+            {
+                RaiseSelectedChipEvent(_listBox.SelectedItem, false);
+                _searchBox.Text = null;
+            }
+        }    
+
+        private void ListBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("listbox lost focus");
+        }
+
+        private void ItemContainerGenerator_StatusChanged(object sender, EventArgs e)
+        {
+            if (_listBox.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+            {
+                _listBox.ItemContainerGenerator.StatusChanged -= ItemContainerGenerator_StatusChanged;
+                Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Input, new Action(DelayedAction));
+            }
+        }
+
+        void DelayedAction()
+        {
+            var i = _listBox.ItemContainerGenerator.ContainerFromIndex(0) as ListBoxItem;
+            if(i != null)
+            {
+                Console.WriteLine("attempt to give focus to listitem");
+                i.Focus();
+            }            
         }
 
         private void ListBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            //throw new NotImplementedException();
+            Console.WriteLine("listbox got focus");
         }
 
         private void PupListBox_KeyUp(object sender, KeyEventArgs e)
@@ -259,12 +299,13 @@ namespace WpfApp1
 
         private void SearchBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            UpdateStates(true);
+            //Console.WriteLine("udate state from searchbox lostfocus");
+            //UpdateStates(true);
         }
 
         private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            UpdateStates(true);
+            //UpdateStates(true);
         }
 
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -278,17 +319,18 @@ namespace WpfApp1
                 _searchBox.Text = string.Empty;
             }
             FilterString = _searchBox.Text;
+            Console.WriteLine("udate state from searchbox text changed");
             UpdateStates(true);
         }
 
-        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (_listBox.SelectedIndex != -1)
-            {
-                RaiseSelectedChipEvent(_listBox.SelectedItem, false);                
-                _searchBox.Text = null;
-            }
-        }
+        //private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    if (_listBox.SelectedIndex != -1)
+        //    {
+        //        RaiseSelectedChipEvent(_listBox.SelectedItem, false);                
+        //        _searchBox.Text = null;
+        //    }
+        //}
 
         /// <summary>
         /// Metodo che serve per inserire i valori nella proprietà ItemsSource del TreeView
@@ -340,7 +382,7 @@ namespace WpfApp1
             {
                 if (ShowPopupOnFocus || !(string.IsNullOrEmpty(_searchBox.Text)))
                 {
-                    VisualStateManager.GoToState(this, "PopupOpenOnTextEdit", useTransitions);                                      
+                    VisualStateManager.GoToState(this, "PopupOpenOnTextEdit", useTransitions);                   
                     Console.WriteLine("show");
                 }
                 else
