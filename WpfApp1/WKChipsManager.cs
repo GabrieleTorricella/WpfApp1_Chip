@@ -280,6 +280,11 @@ namespace WpfApp1
 
         private void ChipItem_KeyDown(object sender, KeyEventArgs e)
         {
+            var element = FocusManager.GetFocusedElement(FocusManager.GetFocusScope(Application.Current.MainWindow));
+            var fe = (element as FrameworkElement).DataContext as WpfApp1.AddChipTemplate;
+            bool isAddChipTemplate = fe != null;            
+            var focusedChip = FocusManager.GetFocusedElement(FocusManager.GetFocusScope(Application.Current.MainWindow)) as WKChip;
+
             switch (e.Key)
             {
                 case Key.Enter:
@@ -291,16 +296,28 @@ namespace WpfApp1
                     break;
                 case Key.Escape:
                     break;
-                case Key.Left:                    
+                case Key.Left:                                              
+                    SetNextFocusedChip(sender, Key.Left);                    
                     break;
                 case Key.Right:                  
                     break;
-                case Key.Delete:
-                    var el = FocusManager.GetFocusedElement(FocusManager.GetFocusScope(Application.Current.MainWindow)) as WKChip;
-                    if(el != null && el is WKChip)
+                case Key.Delete:                    
+                    if(focusedChip != null && focusedChip is WKChip)
                     {
-                        SelectedItems.Remove(el.Content);
+                        SelectedItems.Remove(focusedChip.Content);
                     }                    
+                    break;
+                case Key.Cancel:
+                    if (focusedChip != null && focusedChip is WKChip)
+                    {
+                        SelectedItems.Remove(focusedChip.Content);
+                    }
+                    break;
+                case Key.Back:
+                    if (focusedChip != null && focusedChip is WKChip)
+                    {
+                        SelectedItems.Remove(focusedChip.Content);
+                    }
                     break;
             }
             Console.WriteLine("Focused element: " + FocusManager.GetFocusedElement(FocusManager.GetFocusScope(Application.Current.MainWindow)).ToString());
@@ -308,31 +325,29 @@ namespace WpfApp1
         
         private void SetNextFocusedChip(object senderObject, Key pressedKey)
         {
-            WKChip chip = senderObject as WKChip;
-            UserCase focusedChip = chip.Content as UserCase;
+            var element = FocusManager.GetFocusedElement(FocusManager.GetFocusScope(Application.Current.MainWindow));
+            var fe = (element as FrameworkElement).DataContext as WpfApp1.AddChipTemplate;
+            bool isAddChipTemplate = fe != null;
             IList<UserCase> chipsList = _chipsItem.Items.Cast<UserCase>().Take(this.SelectedItems.Count - 1).ToList();
-
-            // TODO: gestire caso in cui non è presente la mail e controlli su idice
-            int indexOfFocusedChip = chipsList.IndexOf(focusedChip);
             ContentPresenter cp = null;
-            switch (pressedKey)
+
+            if (isAddChipTemplate && pressedKey == Key.Left)
             {
-                case Key.Left:
-                    cp = ((_chipsItem.ItemContainerGenerator.ContainerFromIndex(indexOfFocusedChip - 1))) as ContentPresenter;
-                    break;
-                case Key.Right:
-                    cp = ((_chipsItem.ItemContainerGenerator.ContainerFromIndex(indexOfFocusedChip + 1))) as ContentPresenter;
-                    break;
-            }
-          
-            if(cp != null)
+                TextBox tb = element as TextBox; 
+                if(string.IsNullOrEmpty(tb.Text))
+                {
+                    cp = ((_chipsItem.ItemContainerGenerator.ContainerFromIndex(_chipsItem.Items.Count - 2))) as ContentPresenter;
+                }                
+            }          
+
+            if (cp != null)
             {
                 WKChip nextFocusedChip = (VisualTreeHelper.GetChild(cp, 0)) as WKChip;
-                if(nextFocusedChip != null)
+                if (nextFocusedChip != null)
                 {
-                    nextFocusedChip.Focus();                    
-                }                
-            }           
+                    nextFocusedChip.Focus();
+                }
+            }
         }       
 
         private void ChipItem_SelectedChip(object sender, RoutedEventArgs e)

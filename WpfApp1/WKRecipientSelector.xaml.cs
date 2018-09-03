@@ -31,6 +31,8 @@ namespace WpfApp1
             List<UserCase> caseUsers = new List<UserCase>()
             {
                 new UserCase("alfa","alfa","alfa@alfa.it","CASE PARTIES", "Clients"),
+                new UserCase("alfa1","alfa1","alfa1@alfa.it","CASE PARTIES", "Clients"),
+                new UserCase("alfa2","alfa2","alfa2@alfa.it","CASE PARTIES", "Clients"),
                 new UserCase("beta","beta","beta@beta.it","CASE PARTIES", "Clients"),
                 new UserCase("gamma", "gamma", "gamma@gamma.it", "CASE PARTIES", "Clients"),
                 new UserCase("delta","delta","delta@delta.it","CASE PARTIES", "Opposite Parties"),
@@ -38,7 +40,8 @@ namespace WpfApp1
                 new UserCase("zeta","zeta","zeta@zeta.it","CASE PARTIES", "Opposite Parties"),
                 new UserCase("eta","eta","eta@eta.it","CASE PARTIES", "Opposite Parties"),
                 new UserCase("theta","theta","theta@theta.it","CASE PARTIES", "Other Contacts"),
-                new UserCase("iota","iota","iota@iota.it","CASE PARTIES", "Other Contacts")
+                new UserCase("iota","iota","iota@iota.it","CASE PARTIES", "Other Contacts"),
+                new UserCase("ilSenzaMail","ilSenzaMail","","CASE PARTIES", "Other Contacts")
             };
 
             List<User> users = new List<User>()

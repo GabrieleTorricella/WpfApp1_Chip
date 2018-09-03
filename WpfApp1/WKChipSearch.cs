@@ -213,6 +213,10 @@ namespace WpfApp1
             _searchBox.LostFocus += SearchBox_LostFocus;
             _pupListBox.Loaded += PupListBox_Loaded;
             _pupListBox.KeyUp += PupListBox_KeyUp;
+            _pupListBox.KeyDown += PupListBox_KeyDown;
+            _pupListBox.Opened += PupListBox_Opened;
+
+            _searchBox.KeyDown += SearchtBox_KeyDown;
 
             EventManager.RegisterClassHandler(typeof(ListBoxItem), ListBoxItem.MouseLeftButtonDownEvent, new RoutedEventHandler(this.MouseLeftButtonDownClassHandler));
 
@@ -226,13 +230,60 @@ namespace WpfApp1
             UpdateStates(false);
         }
 
+        private void PupListBox_Opened(object sender, EventArgs e)
+        {
+            SetFocusOnFirstListBoxItem();
+        }
+
+        private void PupListBox_KeyDown(object sender, KeyEventArgs e)
+        {          
+            switch (e.Key)
+            {
+                case Key.Escape:
+                    ClosePopUpBox(true);
+                    Console.WriteLine("Esc pressed");
+                    break;
+                case Key.Enter:                    
+                case Key.Tab:
+                    //ClosePopUpBox(true);                 
+                    break;                
+                case Key.Back:
+                    _searchBox.Text = _searchBox.Text.Remove(_searchBox.Text.Length - 1);
+                    OpenPopUpBox(true);
+                    SetFocusOnFirstListBoxItem();
+                    break;
+                case Key.OemPeriod:
+                    break;
+                case Key.OemComma:
+                    break;
+                default:                    
+                    _searchBox.Text += e.Key.ToString().ToLower();
+                    OpenPopUpBox(true);
+                    SetFocusOnFirstListBoxItem();                                     
+                    break;
+            }            
+        }
+
+        private void SearchtBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {               
+                case Key.Escape:
+                    ClosePopUpBox(true);
+                    Console.WriteLine("Esc pressed");
+                    break;
+            }
+        }
+
         private void MouseLeftButtonDownClassHandler(object sender, RoutedEventArgs e)
         {
-            if (_listBox.SelectedIndex != -1)
+            UserCase item = ((FrameworkElement)sender).DataContext as UserCase;
+            if(item != null)
             {
+                _listBox.SelectedItem = item;
                 RaiseSelectedChipEvent(_listBox.SelectedItem, false);
                 _searchBox.Text = null;
-            }
+            }        
         }    
 
         private void ListBox_LostFocus(object sender, RoutedEventArgs e)
@@ -245,18 +296,33 @@ namespace WpfApp1
             if (_listBox.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
             {
                 _listBox.ItemContainerGenerator.StatusChanged -= ItemContainerGenerator_StatusChanged;
-                Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Input, new Action(DelayedAction));
+                Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Input, new Action(SetFocusOnFirstListBoxItem));
             }
         }
 
-        void DelayedAction()
+        private void SetFocusOnFirstListBoxItem()
         {
-            var i = _listBox.ItemContainerGenerator.ContainerFromIndex(0) as ListBoxItem;
-            if(i != null)
+            var currentItem = _listBox.Items.CurrentItem;
+            ListBoxItem i;
+            if (currentItem != null)
             {
-                Console.WriteLine("attempt to give focus to listitem");
-                i.Focus();
-            }            
+                i = (_listBox.ItemContainerGenerator.ContainerFromItem(currentItem)) as ListBoxItem;
+                if (i != null)
+                {
+                    Console.WriteLine("attempt to give focus to listitem");
+                    i.Focus();
+                }
+
+            }
+            else if (_listBox.Items != null && _listBox.Items.Count > 0)
+            {
+                i = _listBox.ItemContainerGenerator.ContainerFromIndex(0) as ListBoxItem;
+                if (i != null)
+                {
+                    Console.WriteLine("attempt to give focus to listitem");
+                    i.Focus();
+                }
+            }                 
         }
 
         private void ListBox_GotFocus(object sender, RoutedEventArgs e)
@@ -294,7 +360,7 @@ namespace WpfApp1
                     _pupListBox.HorizontalOffset = offset + 1;
                     _pupListBox.HorizontalOffset = offset;
                 };
-            }
+            }            
         }
 
         private void SearchBox_LostFocus(object sender, RoutedEventArgs e)
@@ -397,6 +463,16 @@ namespace WpfApp1
                 Console.WriteLine("hide");
             }
 
+        }
+
+        private void OpenPopUpBox(bool useTransitions)        
+        {
+            VisualStateManager.GoToState(this, "PopupOpenOnTextEdit", useTransitions);
+        }
+
+        private void ClosePopUpBox(bool useTransitions)
+        {
+            VisualStateManager.GoToState(this, "PopupOpenOnFocus", useTransitions);
         }
 
         public event RoutedEventHandler SelectedChip
